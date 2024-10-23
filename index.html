@@ -142,6 +142,7 @@
         let score = 0;
         let lives = 3;
         let numberCount = null; // Number of digits to memorize
+        let originalNumberCount = null; // To store original numberCount
         let numbers = [];
         let roundsUntilSurprise = randomInt(2, 5);
         let isSurpriseRound = false;
@@ -200,13 +201,27 @@
                 }
             } else if (numbers.length > 0) {
                 // Player is submitting their guess
-                const inputStr = playerInputEl.value;
-                if (/^\d+$/.test(inputStr) && inputStr.length === numberCount) {
-                    const playerGuess = inputStr.split('').map(Number);
-                    playerInputEl.value = ''; // Reset input field after each round
-                    checkGuess(playerGuess);
+                const inputStr = playerInputEl.value.trim();
+                if (/^[\d\s]+$/.test(inputStr)) {
+                    const inputDigits = inputStr.split(/\s+/).filter(s => s !== '');
+                    let playerGuess = [];
+
+                    if (inputDigits.length === numberCount) {
+                        playerGuess = inputDigits.map(Number);
+                    } else if (inputDigits.length === 1 && inputDigits[0].length === numberCount) {
+                        // User entered all digits together without spaces
+                        playerGuess = inputDigits[0].split('').map(Number);
+                    }
+
+                    if (playerGuess.length === numberCount && playerGuess.every(num => !isNaN(num))) {
+                        playerInputEl.value = ''; // Reset input field after each round
+                        checkGuess(playerGuess);
+                    } else {
+                        messageEl.textContent = `Please enter exactly ${numberCount} digits.`;
+                        playerInputEl.value = '';
+                    }
                 } else {
-                    messageEl.textContent = `Please enter exactly ${numberCount} digits.`;
+                    messageEl.textContent = 'Please enter only numbers and spaces.';
                     playerInputEl.value = '';
                 }
             }
@@ -222,6 +237,7 @@
             if (roundsUntilSurprise === 0) {
                 isSurpriseRound = true;
                 roundsUntilSurprise = randomInt(2, 5);
+                originalNumberCount = numberCount; // Save the original number count
                 numberCount = randomInt(1, 13, 2); // Random odd number between 1 and 13
             } else {
                 isSurpriseRound = false;
@@ -317,6 +333,9 @@
 
             messageEl.textContent = emotionMessage;
             updateStats();
+
+            // Restore original numberCount after surprise round
+            numberCount = originalNumberCount;
 
             if (lives <= 0) {
                 gameOver();
