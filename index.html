@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Number Memorization Game</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9f5ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .game-container {
+            text-align: center;
+            padding: 50px;
+        }
+
+        #game-area {
+            margin: 0 auto;
+            width: 50%;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #main-title {
+            color: #333;
+        }
+
+        #message {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #timer {
+            font-size: 20px;
+            color: #dc143c;
+            margin-bottom: 20px;
+        }
+
+        #numbers {
+            font-size: 32px;
+            color: #1e90ff;
+            margin-bottom: 20px;
+        }
+
+        #player-input {
+            font-size: 24px;
+            padding: 10px;
+            width: 80%;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            border: 2px solid #1e90ff;
+            border-radius: 5px;
+            display: none; /* Hide input field initially */
+            margin: 0 auto; /* Center the input field */
+        }
+
+        #player-input:focus {
+            outline: none;
+            border-color: #00bfff;
+        }
+
+        #buttons {
+            margin-bottom: 20px;
+        }
+
+        #buttons button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background-color: #1e90ff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #buttons button:hover {
+            background-color: #00bfff;
+        }
+
+        #stats {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        #score, #lives {
+            margin: 5px;
+        }
+
+        #lives {
+            color: #dc143c;
+        }
+
+        #results {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        #player-answer, #correct-answer {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 id="main-title">Number Memorization Game</h1>
+        <div id="game-area">
+            <!-- Game messages -->
+            <p id="message"></p>
+            <!-- Timer -->
+            <p id="timer"></p>
+            <!-- Numbers to memorize -->
+            <p id="numbers"></p>
+            <!-- Input field for player guesses -->
+            <input type="text" id="player-input" placeholder="Enter numbers here" maxlength="100">
+            <!-- Buttons -->
+            <div id="buttons">
+                <button id="start-btn">Start Game</button>
+            </div>
+            <!-- Player's input and correct answer -->
+            <div id="results">
+                <p id="player-answer"></p>
+                <p id="correct-answer"></p>
+            </div>
+            <!-- Score and Lives -->
+            <div id="stats">
+                <p id="score">Score: 0</p>
+                <p id="lives">Lives: ♥♥♥</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript code -->
+    <script>
+        // Initialize variables
+        let score = 0;
+        let lives = 3;
+        let numberCount = null; // Number of digits to memorize
+        let numbers = [];
+        let roundsUntilSurprise = randomInt(2, 5);
+        let isSurpriseRound = false;
+
+        // HTML Elements
+        const messageEl = document.getElementById('message');
+        const numbersEl = document.getElementById('numbers');
+        const playerInputEl = document.getElementById('player-input');
+        const startBtn = document.getElementById('start-btn');
+        const scoreEl = document.getElementById('score');
+        const livesEl = document.getElementById('lives');
+        const timerEl = document.getElementById('timer');
+        const playerAnswerEl = document.getElementById('player-answer');
+        const correctAnswerEl = document.getElementById('correct-answer');
+
+        // Event Listeners
+        startBtn.addEventListener('click', promptNumberCount);
+        playerInputEl.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                submitInput();
+            }
+        });
+
+        // Functions
+        function promptNumberCount() {
+            resetGame();
+            messageEl.textContent = 'How many numbers do you want to memorize?';
+            playerInputEl.placeholder = 'Enter a positive number';
+            playerInputEl.value = '';
+            playerInputEl.style.display = 'block';
+            startBtn.style.display = 'none';
+            playerInputEl.focus();
+        }
+
+        function startGame() {
+            updateStats();
+            resetDisplay();
+            startBtn.style.display = 'none';
+            playerInputEl.style.display = 'none';
+            startRound();
+        }
+
+        function submitInput() {
+            if (numberCount === null) {
+                // Set the number of digits to memorize
+                const count = parseInt(playerInputEl.value);
+                if (Number.isInteger(count) && count > 0) {
+                    numberCount = count;
+                    playerInputEl.value = '';
+                    playerInputEl.placeholder = 'Enter numbers here';
+                    playerInputEl.style.display = 'none';
+                    startGame();
+                } else {
+                    messageEl.textContent = 'Please enter a valid positive integer.';
+                    playerInputEl.value = '';
+                }
+            } else if (numbers.length > 0) {
+                // Player is submitting their guess
+                const inputStr = playerInputEl.value;
+                if (/^\d+$/.test(inputStr) && inputStr.length === numberCount) {
+                    const playerGuess = inputStr.split('').map(Number);
+                    playerInputEl.value = ''; // Reset input field after each round
+                    checkGuess(playerGuess);
+                } else {
+                    messageEl.textContent = `Please enter exactly ${numberCount} digits.`;
+                    playerInputEl.value = '';
+                }
+            }
+        }
+
+        function startRound() {
+            if (lives <= 0) {
+                gameOver();
+                return;
+            }
+
+            resetDisplay();
+            if (roundsUntilSurprise === 0) {
+                isSurpriseRound = true;
+                roundsUntilSurprise = randomInt(2, 5);
+                numberCount = randomInt(1, 13, 2); // Random odd number between 1 and 13
+            } else {
+                isSurpriseRound = false;
+                roundsUntilSurprise--;
+            }
+
+            numbers = generateNumbers(numberCount);
+            displayNumbers();
+        }
+
+        function displayNumbers() {
+            let timeLeft = isSurpriseRound ? 10 : 11;
+            messageEl.textContent = isSurpriseRound ? 'Surprise Round! Memorize these numbers:' : 'Memorize these numbers:';
+            numbersEl.textContent = numbers.join(' ');
+            playerInputEl.style.display = 'none';
+            timerEl.textContent = `Time Remaining: ${timeLeft} seconds`;
+
+            const timer = setInterval(() => {
+                timeLeft--;
+                timerEl.textContent = `Time Remaining: ${timeLeft} seconds`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    hideNumbers();
+                }
+            }, 1000);
+        }
+
+        function hideNumbers() {
+            messageEl.textContent = 'Enter the numbers:';
+            numbersEl.textContent = '';
+            timerEl.textContent = '';
+            playerInputEl.style.display = 'block';
+            playerInputEl.value = '';
+            playerInputEl.placeholder = 'Enter numbers here';
+            playerInputEl.focus();
+        }
+
+        function checkGuess(playerGuess) {
+            const correctCount = numbers.reduce((count, num, index) => {
+                return num === playerGuess[index] ? count + 1 : count;
+            }, 0);
+
+            playerInputEl.style.display = 'none';
+
+            // Display player's input and correct answer
+            playerAnswerEl.textContent = `Your Input: ${playerGuess.join(' ')}`;
+            correctAnswerEl.textContent = `Correct Numbers: ${numbers.join(' ')}`;
+
+            if (isSurpriseRound) {
+                handleSurpriseRound(correctCount);
+            } else {
+                if (arraysEqual(playerGuess, numbers)) {
+                    score++;
+                    messageEl.textContent = 'Correct! You win this round!';
+                    updateStats();
+                    nextRound();
+                } else {
+                    lives--;
+                    messageEl.textContent = lives > 0 ? `Wrong! ${lives} ${lives === 1 ? 'life' : 'lives'} left.` : 'Wrong! No lives left.';
+                    updateStats();
+                    if (lives <= 0) {
+                        gameOver();
+                    } else {
+                        nextRound();
+                    }
+                }
+            }
+        }
+
+        function handleSurpriseRound(correctCount) {
+            const probability = correctCount === 0 ? 0 : Math.pow(correctCount / numberCount, 2);
+            const chance = Math.random();
+            const savedLife = chance <= probability;
+
+            let emotionMessage = '';
+            if (correctCount === numberCount && savedLife) {
+                emotionMessage = 'Amazing! You got a perfect score!';
+            } else if (correctCount > numberCount * 0.7 && !savedLife) {
+                emotionMessage = 'So close! Unlucky this time.';
+            } else if (correctCount < numberCount * 0.3 && savedLife) {
+                emotionMessage = 'Wow! You got lucky!';
+            } else if (correctCount === 0) {
+                emotionMessage = "Don't worry, keep trying!";
+            } else {
+                emotionMessage = savedLife ? 'Good job! You saved a life!' : 'Better luck next time!';
+            }
+
+            if (savedLife) {
+                score++;
+            } else {
+                lives--;
+            }
+
+            messageEl.textContent = emotionMessage;
+            updateStats();
+
+            if (lives <= 0) {
+                gameOver();
+            } else {
+                nextRound();
+            }
+        }
+
+        function nextRound() {
+            setTimeout(() => {
+                playerAnswerEl.textContent = '';
+                correctAnswerEl.textContent = '';
+                startRound();
+            }, 3000);
+        }
+
+        function gameOver() {
+            messageEl.textContent = 'Game Over! Your final score: ' + score;
+            numbersEl.textContent = '';
+            timerEl.textContent = '';
+            playerAnswerEl.textContent = '';
+            correctAnswerEl.textContent = '';
+            playerInputEl.style.display = 'none';
+            startBtn.textContent = 'Play Again';
+            startBtn.style.display = 'inline-block';
+            numberCount = null; // Reset numberCount for new game
+        }
+
+        function updateStats() {
+            scoreEl.textContent = 'Score: ' + score;
+            livesEl.textContent = 'Lives: ' + '♥'.repeat(lives);
+        }
+
+        function resetDisplay() {
+            messageEl.textContent = '';
+            numbersEl.textContent = '';
+            timerEl.textContent = '';
+            playerAnswerEl.textContent = '';
+            correctAnswerEl.textContent = '';
+        }
+
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            roundsUntilSurprise = randomInt(2, 5);
+            isSurpriseRound = false;
+            numberCount = null;
+            updateStats();
+            resetDisplay();
+            playerInputEl.value = '';
+        }
+
+        function generateNumbers(count) {
+            const nums = [];
+            for (let i = 0; i < count; i++) {
+                nums.push(randomInt(0, 9));
+            }
+            return nums;
+        }
+
+        function randomInt(min, max, step = 1) {
+            const range = Math.floor((max - min + step) / step);
+            return min + step * Math.floor(Math.random() * range);
+        }
+
+        function arraysEqual(a1, a2) {
+            return JSON.stringify(a1) === JSON.stringify(a2);
+        }
+    </script>
+</body>
+</html>
