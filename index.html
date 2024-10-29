@@ -105,6 +105,13 @@
             border-color: #00bfff;
         }
 
+        #mode-description {
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
         #stats {
             font-size: 18px;
             margin-top: 20px;
@@ -149,6 +156,13 @@
                         <option value="number">Number Mode</option>
                         <option value="mother">Mother Mode</option>
                     </select>
+                    <!-- Mode Description Text -->
+                    <p id="mode-description">
+                        <strong>Difficulty Levels:</strong><br>
+                        8 or below: It's okay to be weak<br>
+                        9 - 15: Good stuff<br>
+                        16 or above: Wanna be god?
+                    </p>
                 </div>
                 <button id="start-btn">Start Game</button>
             </div>
@@ -189,6 +203,7 @@
         const correctAnswerEl = document.getElementById('correct-answer');
         const modeEl = document.getElementById('mode');
         const modeSelectionEl = document.getElementById('mode-selection'); // New Element Reference
+        const modeDescriptionEl = document.getElementById('mode-description'); // New Element Reference
 
         // Event Listeners
         startBtn.addEventListener('click', promptNumberCount);
@@ -208,7 +223,7 @@
             playerInputEl.placeholder = 'Enter a positive number';
             playerInputEl.value = '';
             playerInputEl.style.display = 'block';
-            modeSelectionEl.style.display = 'none'; // Hide Mode Selection
+            modeSelectionEl.style.display = 'none'; // Hide Mode Selection and Description
             startBtn.style.display = 'none';
             playerInputEl.focus();
         }
@@ -428,7 +443,7 @@
             playerInputEl.style.display = 'none';
             startBtn.textContent = 'Play Again';
             startBtn.style.display = 'inline-block';
-            modeSelectionEl.style.display = 'block'; // Show Mode Selection
+            modeSelectionEl.style.display = 'block'; // Show Mode Selection and Description
             numberCount = null; // Reset numberCount for new game
         }
 
