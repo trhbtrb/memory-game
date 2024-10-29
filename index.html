@@ -53,7 +53,7 @@
             padding: 10px;
             width: 80%;
             box-sizing: border-box;
-            margin-bottom: 20px;
+            margin-bottom: 10px; /* Reduced margin to accommodate difficulty description */
             border: 2px solid #1e90ff;
             border-radius: 5px;
             display: none; /* Hide input field initially */
@@ -63,6 +63,14 @@
         #player-input:focus {
             outline: none;
             border-color: #00bfff;
+        }
+
+        #difficulty-description {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            display: none; /* Hide initially, show when prompting for number count */
         }
 
         #buttons {
@@ -105,13 +113,6 @@
             border-color: #00bfff;
         }
 
-        #mode-description {
-            font-size: 16px;
-            color: #555;
-            margin-top: 10px;
-            line-height: 1.5;
-        }
-
         #stats {
             font-size: 18px;
             margin-top: 20px;
@@ -147,6 +148,13 @@
             <p id="numbers"></p>
             <!-- Input field for player guesses -->
             <input type="text" id="player-input" placeholder="Enter numbers here" maxlength="100">
+            <!-- Difficulty Description -->
+            <p id="difficulty-description">
+                <strong>Difficulty Levels:</strong><br>
+                8 or below: It's okay to be weak<br>
+                9 - 15: Good stuff<br>
+                16 or above: Wanna be god?
+            </p>
             <!-- Buttons -->
             <div id="buttons">
                 <!-- Mode Selection Dropdown -->
@@ -156,13 +164,6 @@
                         <option value="number">Number Mode</option>
                         <option value="mother">Mother Mode</option>
                     </select>
-                    <!-- Mode Description Text -->
-                    <p id="mode-description">
-                        <strong>Difficulty Levels:</strong><br>
-                        8 or below: It's okay to be weak<br>
-                        9 - 15: Good stuff<br>
-                        16 or above: Wanna be god?
-                    </p>
                 </div>
                 <button id="start-btn">Start Game</button>
             </div>
@@ -202,8 +203,8 @@
         const playerAnswerEl = document.getElementById('player-answer');
         const correctAnswerEl = document.getElementById('correct-answer');
         const modeEl = document.getElementById('mode');
-        const modeSelectionEl = document.getElementById('mode-selection'); // New Element Reference
-        const modeDescriptionEl = document.getElementById('mode-description'); // New Element Reference
+        const modeSelectionEl = document.getElementById('mode-selection');
+        const difficultyDescriptionEl = document.getElementById('difficulty-description'); // Updated Element Reference
 
         // Event Listeners
         startBtn.addEventListener('click', promptNumberCount);
@@ -225,7 +226,8 @@
             playerInputEl.placeholder = getDynamicPlaceholder('promptCount');
             playerInputEl.value = '';
             playerInputEl.style.display = 'block';
-            modeSelectionEl.style.display = 'none'; // Hide Mode Selection and Description
+            difficultyDescriptionEl.style.display = 'block'; // Show difficulty description
+            modeSelectionEl.style.display = 'none'; // Hide Mode Selection
             startBtn.style.display = 'none';
             playerInputEl.focus();
         }
@@ -235,6 +237,7 @@
             resetDisplay();
             startBtn.style.display = 'none';
             playerInputEl.style.display = 'none';
+            difficultyDescriptionEl.style.display = 'none'; // Hide difficulty description during game
             startRound();
         }
 
@@ -247,6 +250,7 @@
                     playerInputEl.value = '';
                     playerInputEl.placeholder = getDynamicPlaceholder('input');
                     playerInputEl.style.display = 'none';
+                    difficultyDescriptionEl.style.display = 'none'; // Hide after setting number count
                     startGame();
                 } else {
                     messageEl.textContent = 'Please enter a valid positive integer.';
@@ -445,7 +449,7 @@
             playerInputEl.style.display = 'none';
             startBtn.textContent = 'Play Again';
             startBtn.style.display = 'inline-block';
-            modeSelectionEl.style.display = 'block'; // Show Mode Selection and Description
+            modeSelectionEl.style.display = 'block'; // Show Mode Selection
             numberCount = null; // Reset numberCount for new game
         }
 
@@ -528,7 +532,7 @@
             }
         }
 
-        function getDynamicMessage(type) {
+        function getDynamicMessage(type, livesLeft) {
             const messages = {
                 promptCount: gameMode === 'number' ? 'How many numbers do you want to memorize?' : 'How many characters do you want to memorize?',
                 memorize: gameMode === 'number' ? 'Memorize these numbers:' : 'Memorize these characters:',
@@ -542,7 +546,7 @@
             };
 
             if (typeof messages[type] === 'function') {
-                return messages[type]();
+                return messages[type](livesLeft);
             }
 
             return messages[type] || '';
