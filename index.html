@@ -188,6 +188,7 @@
         const playerAnswerEl = document.getElementById('player-answer');
         const correctAnswerEl = document.getElementById('correct-answer');
         const modeEl = document.getElementById('mode');
+        const modeSelectionEl = document.getElementById('mode-selection'); // New Element Reference
 
         // Event Listeners
         startBtn.addEventListener('click', promptNumberCount);
@@ -204,9 +205,10 @@
         function promptNumberCount() {
             resetGame();
             messageEl.textContent = 'How many characters do you want to memorize?';
-            playerInputEl.placeholder = gameMode === 'number' ? 'Enter a positive number' : 'Enter a positive number';
+            playerInputEl.placeholder = 'Enter a positive number';
             playerInputEl.value = '';
             playerInputEl.style.display = 'block';
+            modeSelectionEl.style.display = 'none'; // Hide Mode Selection
             startBtn.style.display = 'none';
             playerInputEl.focus();
         }
@@ -426,6 +428,7 @@
             playerInputEl.style.display = 'none';
             startBtn.textContent = 'Play Again';
             startBtn.style.display = 'inline-block';
+            modeSelectionEl.style.display = 'block'; // Show Mode Selection
             numberCount = null; // Reset numberCount for new game
         }
 
