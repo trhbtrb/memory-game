@@ -80,50 +80,49 @@
             margin-bottom: 20px;
         }
 
-        #buttons button {
+        /* Mode Selection Buttons */
+        .mode-button {
+            font-size: 1.125rem; /* 18px */
+            padding: 0.625rem 1.25rem; /* 10px 20px */
+            margin: 0.3125rem; /* 5px */
+            border: 2px solid #1e90ff;
+            background-color: #ffffff;
+            color: #1e90ff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .mode-button.selected {
+            background-color: #1e90ff;
+            color: #ffffff;
+        }
+
+        .mode-button:hover {
+            background-color: #00bfff;
+            color: #ffffff;
+        }
+
+        /* Start Button */
+        #start-btn {
             font-size: 1.125rem; /* 18px */
             padding: 0.625rem 1.25rem; /* 10px 20px */
             margin: 0.3125rem; /* 5px */
             border: none;
-            background-color: #1e90ff;
+            background-color: #a9a9a9; /* Disabled color */
             color: #fff;
             border-radius: 5px;
-            cursor: pointer;
+            cursor: not-allowed;
             transition: background-color 0.3s ease;
         }
 
-        #buttons button:hover {
-            background-color: #00bfff;
-        }
-
-        #mode-selection {
-            margin-bottom: 20px;
-        }
-
-        #mode-selection label {
-            font-size: 1.125rem; /* 18px */
-            margin-right: 0.625rem; /* 10px */
-        }
-
-        #mode-selection select {
-            font-size: 1rem; /* 16px */
-            padding: 0.3125rem 1.5rem 0.3125rem 0.3125rem; /* 5px */
-            border: 2px solid #1e90ff;
-            border-radius: 5px;
-            outline: none;
-            background-color: #fff;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%227%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M1%201l4%204%204-4%22%20stroke%3D%22%231e90ff%22%20stroke-width%3D%222%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 10px 7px;
+        #start-btn.enabled {
+            background-color: #1e90ff;
             cursor: pointer;
         }
 
-        #mode-selection select:focus {
-            border-color: #00bfff;
+        #start-btn.enabled:hover {
+            background-color: #00bfff;
         }
 
         #stats {
@@ -184,20 +183,16 @@
                 font-size: 0.9rem;
             }
 
-            #buttons button {
+            .mode-button {
                 font-size: 1rem;
                 padding: 0.5rem 1rem; /* 8px 16px */
                 margin: 0.25rem; /* 4px */
             }
 
-            #mode-selection label {
+            #start-btn {
                 font-size: 1rem;
-                margin-right: 0.5rem; /* 8px */
-            }
-
-            #mode-selection select {
-                font-size: 0.875rem; /* 14px */
-                padding: 0.25rem; /* 4px */
+                padding: 0.5rem 1rem; /* 8px 16px */
+                margin: 0.25rem; /* 4px */
             }
 
             #stats {
@@ -248,20 +243,16 @@
                 font-size: 0.8rem;
             }
 
-            #buttons button {
+            .mode-button {
                 font-size: 0.875rem; /* 14px */
                 padding: 0.4rem 0.8rem; /* 6.4px 12.8px */
                 margin: 0.2rem; /* 3.2px */
             }
 
-            #mode-selection label {
-                font-size: 0.875rem;
-                margin-right: 0.4rem; /* 6.4px */
-            }
-
-            #mode-selection select {
-                font-size: 0.75rem; /* 12px */
-                padding: 0.2rem; /* 3.2px */
+            #start-btn {
+                font-size: 0.875rem; /* 14px */
+                padding: 0.4rem 0.8rem; /* 6.4px 12.8px */
+                margin: 0.2rem; /* 3.2px */
             }
 
             #stats {
@@ -283,7 +274,7 @@
         <h1 id="main-title">Character Memorization Game</h1>
         <div id="game-area">
             <!-- Game messages -->
-            <p id="message"></p>
+            <p id="message">Select a mode and start the game!</p>
             <!-- Timer -->
             <p id="timer"></p>
             <!-- Numbers or Characters to memorize -->
@@ -299,13 +290,10 @@
             </p>
             <!-- Buttons -->
             <div id="buttons">
-                <!-- Mode Selection Dropdown -->
+                <!-- Mode Selection Buttons -->
                 <div id="mode-selection">
-                    <label for="mode">Select Mode: </label>
-                    <select id="mode">
-                        <option value="number">Numbers Only</option>
-                        <option value="mother">Mother Mode</option>
-                    </select>
+                    <button class="mode-button" id="mode-number">Numbers Only</button>
+                    <button class="mode-button" id="mode-mother">Mother Mode</button>
                 </div>
                 <button id="start-btn">Start Game</button>
             </div>
@@ -332,7 +320,7 @@
         let numbers = [];
         let roundsUntilSurprise = randomInt(2, 5);
         let isSurpriseRound = false;
-        let gameMode = 'number'; // default mode
+        let gameMode = null; // No mode selected initially
 
         // HTML Elements
         const messageEl = document.getElementById('message');
@@ -344,32 +332,44 @@
         const timerEl = document.getElementById('timer');
         const playerAnswerEl = document.getElementById('player-answer');
         const correctAnswerEl = document.getElementById('correct-answer');
-        const modeEl = document.getElementById('mode');
-        const modeSelectionEl = document.getElementById('mode-selection');
+        const modeNumberBtn = document.getElementById('mode-number');
+        const modeMotherBtn = document.getElementById('mode-mother');
+        const modeButtons = document.querySelectorAll('.mode-button');
         const difficultyDescriptionEl = document.getElementById('difficulty-description'); // Updated Element Reference
 
         // Event Listeners
+        modeNumberBtn.addEventListener('click', () => selectMode('number', modeNumberBtn));
+        modeMotherBtn.addEventListener('click', () => selectMode('mother', modeMotherBtn));
         startBtn.addEventListener('click', promptNumberCount);
         playerInputEl.addEventListener('keyup', function(event) {
             if (event.key === 'Enter') {
                 submitInput();
             }
         });
-        modeEl.addEventListener('change', function() {
-            gameMode = this.value;
-            updateModeInstructions();
-        });
 
         // Functions
+        function selectMode(mode, button) {
+            gameMode = mode;
+            // Remove 'selected' class from all mode buttons
+            modeButtons.forEach(btn => btn.classList.remove('selected'));
+            // Add 'selected' class to the clicked button
+            button.classList.add('selected');
+            // Enable the Start button
+            startBtn.classList.add('enabled');
+            startBtn.style.cursor = 'pointer';
+            startBtn.style.backgroundColor = '#1e90ff';
+            startBtn.textContent = 'Start Game';
+        }
+
         function promptNumberCount() {
+            if (!gameMode) return; // Do nothing if no mode is selected
             resetGame();
-            updateModeInstructions();
             messageEl.textContent = getDynamicMessage('promptCount');
             playerInputEl.placeholder = getDynamicPlaceholder('promptCount');
             playerInputEl.value = '';
             playerInputEl.style.display = 'block';
             difficultyDescriptionEl.style.display = 'block'; // Show difficulty description
-            modeSelectionEl.style.display = 'none'; // Hide Mode Selection
+            document.getElementById('mode-selection').style.display = 'none'; // Hide Mode Selection
             startBtn.style.display = 'none';
             playerInputEl.focus();
         }
@@ -377,7 +377,6 @@
         function startGame() {
             updateStats();
             resetDisplay();
-            startBtn.style.display = 'none';
             playerInputEl.style.display = 'none';
             difficultyDescriptionEl.style.display = 'none'; // Hide difficulty description during game
             startRound();
@@ -590,8 +589,13 @@
             correctAnswerEl.textContent = '';
             playerInputEl.style.display = 'none';
             startBtn.textContent = 'Play Again';
+            startBtn.classList.remove('enabled');
+            startBtn.style.backgroundColor = '#a9a9a9';
+            startBtn.style.cursor = 'not-allowed';
             startBtn.style.display = 'inline-block';
-            modeSelectionEl.style.display = 'block'; // Show Mode Selection
+            document.getElementById('mode-selection').style.display = 'block'; // Show Mode Selection
+            modeButtons.forEach(btn => btn.classList.remove('selected')); // Deselect mode buttons
+            gameMode = null; // Reset gameMode
             numberCount = null; // Reset numberCount for new game
         }
 
@@ -668,18 +672,6 @@
                 return guessArray.join(' ');
             }
             return guessArray.join(' ');
-        }
-
-        function updateModeInstructions() {
-            // Update all instructional texts based on the selected mode
-            if (numberCount === null) {
-                // When setting up the game
-                messageEl.textContent = getDynamicMessage('selectMode');
-            } else {
-                // During the game
-                // This ensures that messages like "Memorize these..." are updated
-                messageEl.textContent = getDynamicMessage('currentMode');
-            }
         }
 
         function getDynamicMessage(type, livesLeft) {
