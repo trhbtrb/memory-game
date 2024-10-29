@@ -105,6 +105,13 @@
             border-color: #00bfff;
         }
 
+        #mode-description {
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
         #stats {
             font-size: 18px;
             margin-top: 20px;
@@ -149,6 +156,13 @@
                         <option value="number">Number Mode</option>
                         <option value="mother">Mother Mode</option>
                     </select>
+                    <!-- Mode Description Text -->
+                    <p id="mode-description">
+                        <strong>Difficulty Levels:</strong><br>
+                        8 or below: It's okay to be weak<br>
+                        9 - 15: Good stuff<br>
+                        16 or above: Wanna be god?
+                    </p>
                 </div>
                 <button id="start-btn">Start Game</button>
             </div>
@@ -189,6 +203,7 @@
         const correctAnswerEl = document.getElementById('correct-answer');
         const modeEl = document.getElementById('mode');
         const modeSelectionEl = document.getElementById('mode-selection'); // New Element Reference
+        const modeDescriptionEl = document.getElementById('mode-description'); // New Element Reference
 
         // Event Listeners
         startBtn.addEventListener('click', promptNumberCount);
@@ -199,16 +214,18 @@
         });
         modeEl.addEventListener('change', function() {
             gameMode = this.value;
+            updateModeInstructions();
         });
 
         // Functions
         function promptNumberCount() {
             resetGame();
-            messageEl.textContent = 'How many characters do you want to memorize?';
-            playerInputEl.placeholder = 'Enter a positive number';
+            updateModeInstructions();
+            messageEl.textContent = getDynamicMessage('promptCount');
+            playerInputEl.placeholder = getDynamicPlaceholder('promptCount');
             playerInputEl.value = '';
             playerInputEl.style.display = 'block';
-            modeSelectionEl.style.display = 'none'; // Hide Mode Selection
+            modeSelectionEl.style.display = 'none'; // Hide Mode Selection and Description
             startBtn.style.display = 'none';
             playerInputEl.focus();
         }
@@ -228,7 +245,7 @@
                 if (Number.isInteger(count) && count > 0) {
                     numberCount = count;
                     playerInputEl.value = '';
-                    playerInputEl.placeholder = gameMode === 'number' ? 'Enter numbers here' : 'Enter characters here';
+                    playerInputEl.placeholder = getDynamicPlaceholder('input');
                     playerInputEl.style.display = 'none';
                     startGame();
                 } else {
@@ -312,7 +329,7 @@
 
         function displayNumbers() {
             let timeLeft = isSurpriseRound ? 10 : 11;
-            messageEl.textContent = isSurpriseRound ? 'Surprise Round! Memorize these characters:' : 'Memorize these characters:';
+            messageEl.textContent = isSurpriseRound ? getDynamicMessage('surpriseRound') : getDynamicMessage('memorize');
             numbersEl.textContent = numbers.join(' ');
             playerInputEl.style.display = 'none';
             timerEl.textContent = `Time Remaining: ${timeLeft} seconds`;
@@ -328,12 +345,12 @@
         }
 
         function hideNumbers() {
-            messageEl.textContent = 'Enter the characters:';
+            messageEl.textContent = getDynamicMessage('enterCharacters');
             numbersEl.textContent = '';
             timerEl.textContent = '';
             playerInputEl.style.display = 'block';
             playerInputEl.value = '';
-            playerInputEl.placeholder = gameMode === 'number' ? 'Enter numbers here' : 'Enter characters here';
+            playerInputEl.placeholder = getDynamicPlaceholder('input');
             playerInputEl.focus();
         }
 
@@ -350,20 +367,20 @@
             playerInputEl.style.display = 'none';
 
             // Display player's input and correct answer
-            playerAnswerEl.textContent = `Your Input: ${playerGuess.join(' ')}`;
-            correctAnswerEl.textContent = `Correct Sequence: ${numbers.join(' ')}`;
+            playerAnswerEl.textContent = `Your Input: ${formatGuess(playerGuess)}`;
+            correctAnswerEl.textContent = `Correct Sequence: ${formatGuess(numbers)}`;
 
             if (isSurpriseRound) {
                 handleSurpriseRound(correctCount);
             } else {
                 if (arraysEqual(playerGuess, numbers)) {
                     score++;
-                    messageEl.textContent = 'Correct! You win this round!';
+                    messageEl.textContent = getDynamicMessage('correct');
                     updateStats();
                     nextRound();
                 } else {
                     lives--;
-                    messageEl.textContent = lives > 0 ? `Wrong! ${lives} ${lives === 1 ? 'life' : 'lives'} left.` : 'Wrong! No lives left.';
+                    messageEl.textContent = lives > 0 ? getDynamicMessage('wrong', lives) : getDynamicMessage('wrongNoLives');
                     updateStats();
                     if (lives <= 0) {
                         gameOver();
@@ -420,7 +437,7 @@
         }
 
         function gameOver() {
-            messageEl.textContent = 'Game Over! Your final score: ' + score;
+            messageEl.textContent = `Game Over! Your final score: ${score}`;
             numbersEl.textContent = '';
             timerEl.textContent = '';
             playerAnswerEl.textContent = '';
@@ -428,7 +445,7 @@
             playerInputEl.style.display = 'none';
             startBtn.textContent = 'Play Again';
             startBtn.style.display = 'inline-block';
-            modeSelectionEl.style.display = 'block'; // Show Mode Selection
+            modeSelectionEl.style.display = 'block'; // Show Mode Selection and Description
             numberCount = null; // Reset numberCount for new game
         }
 
@@ -488,6 +505,56 @@
                 }
             }
             return true;
+        }
+
+        function formatGuess(guessArray) {
+            if (gameMode === 'number') {
+                return guessArray.join(' ');
+            } else if (gameMode === 'mother') {
+                return guessArray.join(' ');
+            }
+            return guessArray.join(' ');
+        }
+
+        function updateModeInstructions() {
+            // Update all instructional texts based on the selected mode
+            if (numberCount === null) {
+                // When setting up the game
+                messageEl.textContent = getDynamicMessage('selectMode');
+            } else {
+                // During the game
+                // This ensures that messages like "Memorize these..." are updated
+                messageEl.textContent = getDynamicMessage('currentMode');
+            }
+        }
+
+        function getDynamicMessage(type) {
+            const messages = {
+                promptCount: gameMode === 'number' ? 'How many numbers do you want to memorize?' : 'How many characters do you want to memorize?',
+                memorize: gameMode === 'number' ? 'Memorize these numbers:' : 'Memorize these characters:',
+                surpriseRound: gameMode === 'number' ? 'Surprise Round! Memorize these numbers:' : 'Surprise Round! Memorize these characters:',
+                enterCharacters: gameMode === 'number' ? 'Enter the numbers:' : 'Enter the characters:',
+                correct: 'Correct! You win this round!',
+                wrong: (livesLeft) => gameMode === 'number' ? `Wrong! ${livesLeft} ${livesLeft === 1 ? 'life' : 'lives'} left.` : `Wrong! ${livesLeft} ${livesLeft === 1 ? 'life' : 'lives'} left.`,
+                wrongNoLives: 'Wrong! No lives left.',
+                selectMode: 'Select the mode and start the game.',
+                currentMode: gameMode === 'number' ? 'Number Mode Active.' : 'Mother Mode Active.'
+            };
+
+            if (typeof messages[type] === 'function') {
+                return messages[type]();
+            }
+
+            return messages[type] || '';
+        }
+
+        function getDynamicPlaceholder(type) {
+            const placeholders = {
+                promptCount: 'Enter a positive number',
+                input: gameMode === 'number' ? 'Enter numbers here' : 'Enter characters here'
+            };
+
+            return placeholders[type] || 'Enter input here';
         }
     </script>
 </body>
