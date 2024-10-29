@@ -105,9 +105,10 @@
             margin-right: 0.625rem; /* 10px */
         }
 
+        /* Updated select element */
         #mode-selection select {
             font-size: 1rem; /* 16px */
-            padding: 0.3125rem; /* 5px */
+            padding: 0.3125rem 2.5rem 0.3125rem 0.3125rem; /* Top, Right, Bottom, Left */
             border: 2px solid #1e90ff;
             border-radius: 5px;
             outline: none;
@@ -117,9 +118,10 @@
             -moz-appearance: none;
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%227%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M1%201l4%204%204-4%22%20stroke%3D%22%231e90ff%22%20stroke-width%3D%222%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 0.75rem center;
+            background-position: right 1rem center; /* Adjusted position */
             background-size: 10px 7px;
             cursor: pointer;
+            min-width: 150px; /* Ensures adequate width */
         }
 
         #mode-selection select:focus {
@@ -195,9 +197,12 @@
                 margin-right: 0.5rem; /* 8px */
             }
 
+            /* Adjusted select element for tablets */
             #mode-selection select {
                 font-size: 0.875rem; /* 14px */
-                padding: 0.25rem; /* 4px */
+                padding: 0.25rem 2rem 0.25rem 0.25rem; /* Adjusted padding */
+                background-position: right 0.75rem center; /* Adjusted position */
+                min-width: 120px; /* Adjusted width */
             }
 
             #stats {
@@ -259,9 +264,12 @@
                 margin-right: 0.4rem; /* 6.4px */
             }
 
+            /* Adjusted select element for mobile */
             #mode-selection select {
                 font-size: 0.75rem; /* 12px */
-                padding: 0.2rem; /* 3.2px */
+                padding: 0.2rem 1.5rem 0.2rem 0.2rem; /* Adjusted padding */
+                background-position: right 0.5rem center; /* Adjusted position */
+                min-width: 100px; /* Adjusted width */
             }
 
             #stats {
@@ -303,8 +311,8 @@
                 <div id="mode-selection">
                     <label for="mode">Select Mode: </label>
                     <select id="mode">
-                        <option value="number">Numbers Only</option>
-                        <option value="mother">Mother Mode</option>
+                        <option value="number">Elect Mode</option>
+                        <option value="voter">Voter Mode</option>
                     </select>
                 </div>
                 <button id="start-btn">Start Game</button>
@@ -424,7 +432,7 @@
                         messageEl.textContent = 'Please enter only numbers and spaces.';
                         playerInputEl.value = '';
                     }
-                } else if (gameMode === 'mother') {
+                } else if (gameMode === 'voter') { // Updated to 'voter' mode
                     // Allow letters and numbers, case-insensitive
                     if (/^[A-Za-z0-9\s]+$/.test(inputStr)) {
                         const inputChars = inputStr.split(/\s+/).filter(s => s !== '');
@@ -504,7 +512,7 @@
             const correctCount = numbers.reduce((count, char, index) => {
                 if (gameMode === 'number') {
                     return char === playerGuess[index] ? count + 1 : count;
-                } else if (gameMode === 'mother') {
+                } else if (gameMode === 'voter') { // Updated to 'voter' mode
                     return char === playerGuess[index] ? count + 1 : count;
                 }
                 return count;
@@ -624,7 +632,7 @@
             for (let i = 0; i < count; i++) {
                 if (gameMode === 'number') {
                     chars.push(randomInt(0, 9));
-                } else if (gameMode === 'mother') {
+                } else if (gameMode === 'voter') { // Updated to 'voter' mode
                     chars.push(randomAlphaNumeric());
                 }
             }
@@ -654,7 +662,7 @@
             for (let i = 0; i < a1.length; i++) {
                 if (gameMode === 'number') {
                     if (a1[i] !== a2[i]) return false;
-                } else if (gameMode === 'mother') {
+                } else if (gameMode === 'voter') { // Updated to 'voter' mode
                     if (a1[i] !== a2[i]) return false; // Case-sensitive comparison
                 }
             }
@@ -664,7 +672,7 @@
         function formatGuess(guessArray) {
             if (gameMode === 'number') {
                 return guessArray.join(' ');
-            } else if (gameMode === 'mother') {
+            } else if (gameMode === 'voter') { // Updated to 'voter' mode
                 return guessArray.join(' ');
             }
             return guessArray.join(' ');
@@ -691,7 +699,7 @@
                 correct: 'Correct! You win this round!',
                 wrong: (livesLeft) => gameMode === 'number' ? `Wrong! ${livesLeft} ${livesLeft === 1 ? 'life' : 'lives'} left.` : `Wrong! ${livesLeft} ${livesLeft === 1 ? 'life' : 'lives'} left.`,
                 wrongNoLives: 'Wrong! No lives left.',
-                currentMode: gameMode === 'number' ? 'Number Mode Active.' : 'Mother Mode Active.',
+                currentMode: gameMode === 'number' ? 'Elect Mode Active.' : 'Voter Mode Active.',
                 selectMode: 'Select a mode and start the game!'
             };
 
