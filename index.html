@@ -19,8 +19,7 @@
 
         #game-area {
             margin: 0 auto;
-            width: 60%;
-            max-width: 600px;
+            width: 50%;
             background-color: #ffffff;
             padding: 30px;
             border-radius: 10px;
@@ -29,72 +28,6 @@
 
         #main-title {
             color: #333;
-            margin-bottom: 20px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .visible {
-            display: block;
-        }
-
-        .section {
-            margin-bottom: 20px;
-        }
-
-        .section label {
-            font-size: 18px;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .section select, .section input {
-            font-size: 16px;
-            padding: 10px;
-            width: 80%;
-            max-width: 300px;
-            box-sizing: border-box;
-            margin: 0 auto;
-            display: block;
-            border: 2px solid #1e90ff;
-            border-radius: 5px;
-        }
-
-        .section select:focus, .section input:focus {
-            outline: none;
-            border-color: #00bfff;
-        }
-
-        #difficulty-description {
-            font-size: 16px;
-            color: #555;
-            margin-top: 10px;
-            line-height: 1.5;
-            text-align: left;
-            width: 80%;
-            max-width: 300px;
-            margin: 10px auto 0 auto;
-        }
-
-        #difficulty-description strong {
-            font-weight: bold;
-        }
-
-        #start-btn, #submit-btn, #play-again-btn {
-            font-size: 18px;
-            padding: 10px 20px;
-            margin: 15px 5px 0 5px;
-            border: none;
-            background-color: #1e90ff;
-            color: #fff;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #start-btn:hover, #submit-btn:hover, #play-again-btn:hover {
-            background-color: #00bfff;
         }
 
         #message {
@@ -113,20 +46,18 @@
             font-size: 32px;
             color: #1e90ff;
             margin-bottom: 20px;
-            word-wrap: break-word;
         }
 
         #player-input {
             font-size: 24px;
             padding: 10px;
             width: 80%;
-            max-width: 400px;
             box-sizing: border-box;
             margin-bottom: 20px;
             border: 2px solid #1e90ff;
             border-radius: 5px;
-            display: none; /* Hidden initially */
-            margin: 0 auto;
+            display: none; /* Hide input field initially */
+            margin: 0 auto; /* Center the input field */
         }
 
         #player-input:focus {
@@ -134,13 +65,44 @@
             border-color: #00bfff;
         }
 
-        #results {
-            font-size: 20px;
+        #buttons {
             margin-bottom: 20px;
         }
 
-        #results p {
-            margin: 5px 0;
+        #buttons button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background-color: #1e90ff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #buttons button:hover {
+            background-color: #00bfff;
+        }
+
+        #mode-selection {
+            margin-bottom: 20px;
+        }
+
+        #mode-selection label {
+            font-size: 18px;
+            margin-right: 10px;
+        }
+
+        #mode-selection select {
+            font-size: 16px;
+            padding: 5px;
+            border: 2px solid #1e90ff;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        #mode-selection select:focus {
+            border-color: #00bfff;
         }
 
         #stats {
@@ -155,60 +117,50 @@
         #lives {
             color: #dc143c;
         }
+
+        #results {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        #player-answer, #correct-answer {
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div class="game-container">
         <h1 id="main-title">Number Memorization Game</h1>
         <div id="game-area">
-            <!-- Initial Setup: Mode Selection -->
-            <div id="mode-selection-section" class="section visible">
-                <label for="mode">Select Mode:</label>
-                <select id="mode">
-                    <option value="number">Number Mode</option>
-                    <option value="mother">Mother Mode</option>
-                </select>
+            <!-- Game messages -->
+            <p id="message"></p>
+            <!-- Timer -->
+            <p id="timer"></p>
+            <!-- Numbers or Characters to memorize -->
+            <p id="numbers"></p>
+            <!-- Input field for player guesses -->
+            <input type="text" id="player-input" placeholder="Enter numbers here" maxlength="100">
+            <!-- Buttons -->
+            <div id="buttons">
+                <!-- Mode Selection Dropdown -->
+                <div id="mode-selection">
+                    <label for="mode">Select Mode: </label>
+                    <select id="mode">
+                        <option value="number">Number Mode</option>
+                        <option value="mother">Mother Mode</option>
+                    </select>
+                </div>
                 <button id="start-btn">Start Game</button>
             </div>
-
-            <!-- Setup: Number of Characters/Numbers -->
-            <div id="char-count-section" class="section hidden">
-                <label for="char-count">How many characters/numbers do you want to memorize?</label>
-                <input type="number" id="char-count" min="1" placeholder="Enter a positive number">
-                <div id="difficulty-description">
-                    <strong>Difficulty Levels:</strong><br>
-                    <strong>8 or below:</strong> It's okay to be weak<br>
-                    <strong>9 - 15:</strong> Good stuff<br>
-                    <strong>16 or above:</strong> Wanna be god?
-                </div>
-                <button id="submit-btn">Submit</button>
-            </div>
-
-            <!-- Gameplay Elements -->
-            <div id="gameplay-section" class="hidden">
-                <p id="message"></p>
-                <p id="timer"></p>
-                <p id="numbers"></p>
-                <input type="text" id="player-input" placeholder="Enter your memorized sequence here" maxlength="100">
-                <button id="submit-btn">Submit</button>
-            </div>
-
-            <!-- Results Display -->
-            <div id="results" class="hidden">
+            <!-- Player's input and correct answer -->
+            <div id="results">
                 <p id="player-answer"></p>
                 <p id="correct-answer"></p>
             </div>
-
             <!-- Score and Lives -->
-            <div id="stats" class="hidden">
+            <div id="stats">
                 <p id="score">Score: 0</p>
                 <p id="lives">Lives: ♥♥♥</p>
-            </div>
-
-            <!-- Game Over Screen -->
-            <div id="game-over-section" class="section hidden">
-                <p id="game-over-message"></p>
-                <button id="play-again-btn">Play Again</button>
             </div>
         </div>
     </div>
@@ -226,74 +178,120 @@
         let gameMode = 'number'; // default mode
 
         // HTML Elements
-        const modeSelectionSection = document.getElementById('mode-selection-section');
-        const charCountSection = document.getElementById('char-count-section');
-        const gameplaySection = document.getElementById('gameplay-section');
-        const gameOverSection = document.getElementById('game-over-section');
-
-        const modeEl = document.getElementById('mode');
-        const startBtn = document.getElementById('start-btn');
-        const charCountEl = document.getElementById('char-count');
-        const submitBtn = document.getElementById('submit-btn');
-        const playAgainBtn = document.getElementById('play-again-btn');
-
         const messageEl = document.getElementById('message');
-        const timerEl = document.getElementById('timer');
         const numbersEl = document.getElementById('numbers');
         const playerInputEl = document.getElementById('player-input');
-        const resultsEl = document.getElementById('results');
-        const playerAnswerEl = document.getElementById('player-answer');
-        const correctAnswerEl = document.getElementById('correct-answer');
-        const statsEl = document.getElementById('stats');
+        const startBtn = document.getElementById('start-btn');
         const scoreEl = document.getElementById('score');
         const livesEl = document.getElementById('lives');
-        const gameOverMessageEl = document.getElementById('game-over-message');
+        const timerEl = document.getElementById('timer');
+        const playerAnswerEl = document.getElementById('player-answer');
+        const correctAnswerEl = document.getElementById('correct-answer');
+        const modeEl = document.getElementById('mode');
+        const modeSelectionEl = document.getElementById('mode-selection'); // New Element Reference
 
         // Event Listeners
-        startBtn.addEventListener('click', () => {
-            gameMode = modeEl.value;
-            modeSelectionSection.classList.add('hidden');
-            charCountSection.classList.remove('hidden');
-            statsEl.classList.remove('hidden');
-        });
-
-        submitBtn.addEventListener('click', () => {
-            if (charCountSection.classList.contains('hidden') && gameplaySection.classList.contains('visible')) {
-                // Submit Guess
-                submitGuess();
-            } else if (charCountSection.classList.contains('visible')) {
-                // Submit Character Count
-                submitCharacterCount();
-            }
-        });
-
+        startBtn.addEventListener('click', promptNumberCount);
         playerInputEl.addEventListener('keyup', function(event) {
             if (event.key === 'Enter') {
-                submitBtn.click();
+                submitInput();
             }
         });
-
-        playAgainBtn.addEventListener('click', () => {
-            resetGame();
+        modeEl.addEventListener('change', function() {
+            gameMode = this.value;
         });
 
         // Functions
+        function promptNumberCount() {
+            resetGame();
+            messageEl.textContent = 'How many characters do you want to memorize?';
+            playerInputEl.placeholder = 'Enter a positive number';
+            playerInputEl.value = '';
+            playerInputEl.style.display = 'block';
+            modeSelectionEl.style.display = 'none'; // Hide Mode Selection
+            startBtn.style.display = 'none';
+            playerInputEl.focus();
+        }
 
-        function submitCharacterCount() {
-            const count = parseInt(charCountEl.value);
-            if (!Number.isInteger(count) || count <= 0) {
-                alert('Please enter a valid positive integer for the number of characters/numbers.');
-                return;
-            }
-            numberCount = count;
-            charCountSection.classList.add('hidden');
-            gameplaySection.classList.remove('hidden');
+        function startGame() {
+            updateStats();
+            resetDisplay();
+            startBtn.style.display = 'none';
+            playerInputEl.style.display = 'none';
             startRound();
+        }
+
+        function submitInput() {
+            if (numberCount === null) {
+                // Set the number of characters to memorize
+                const count = parseInt(playerInputEl.value);
+                if (Number.isInteger(count) && count > 0) {
+                    numberCount = count;
+                    playerInputEl.value = '';
+                    playerInputEl.placeholder = gameMode === 'number' ? 'Enter numbers here' : 'Enter characters here';
+                    playerInputEl.style.display = 'none';
+                    startGame();
+                } else {
+                    messageEl.textContent = 'Please enter a valid positive integer.';
+                    playerInputEl.value = '';
+                }
+            } else if (numbers.length > 0) {
+                // Player is submitting their guess
+                const inputStr = playerInputEl.value.trim();
+                if (gameMode === 'number') {
+                    if (/^[\d\s]+$/.test(inputStr)) {
+                        const inputDigits = inputStr.split(/\s+/).filter(s => s !== '');
+                        let playerGuess = [];
+
+                        if (inputDigits.length === numberCount) {
+                            playerGuess = inputDigits.map(Number);
+                        } else if (inputDigits.length === 1 && inputDigits[0].length === numberCount) {
+                            // User entered all digits together without spaces
+                            playerGuess = inputDigits[0].split('').map(Number);
+                        }
+
+                        if (playerGuess.length === numberCount && playerGuess.every(num => !isNaN(num))) {
+                            playerInputEl.value = ''; // Reset input field after each round
+                            checkGuess(playerGuess);
+                        } else {
+                            messageEl.textContent = `Please enter exactly ${numberCount} digits.`;
+                            playerInputEl.value = '';
+                        }
+                    } else {
+                        messageEl.textContent = 'Please enter only numbers and spaces.';
+                        playerInputEl.value = '';
+                    }
+                } else if (gameMode === 'mother') {
+                    // Allow letters and numbers, case-insensitive
+                    if (/^[A-Za-z0-9\s]+$/.test(inputStr)) {
+                        const inputChars = inputStr.split(/\s+/).filter(s => s !== '');
+                        let playerGuess = [];
+
+                        if (inputChars.length === numberCount) {
+                            playerGuess = inputChars;
+                        } else if (inputChars.length === 1 && inputChars[0].length === numberCount) {
+                            // User entered all characters together without spaces
+                            playerGuess = inputChars[0].split('');
+                        }
+
+                        if (playerGuess.length === numberCount && playerGuess.every(char => /^[A-Za-z0-9]$/.test(char))) {
+                            playerInputEl.value = ''; // Reset input field after each round
+                            checkGuess(playerGuess);
+                        } else {
+                            messageEl.textContent = `Please enter exactly ${numberCount} characters (letters or numbers).`;
+                            playerInputEl.value = '';
+                        }
+                    } else {
+                        messageEl.textContent = 'Please enter only letters, numbers, and spaces.';
+                        playerInputEl.value = '';
+                    }
+                }
+            }
         }
 
         function startRound() {
             if (lives <= 0) {
-                endGame();
+                gameOver();
                 return;
             }
 
@@ -308,18 +306,16 @@
                 roundsUntilSurprise--;
             }
 
-            numbers = generateSequence(numberCount, gameMode);
+            numbers = generateNumbers(numberCount);
             displayNumbers();
         }
 
         function displayNumbers() {
             let timeLeft = isSurpriseRound ? 10 : 11;
-            messageEl.textContent = isSurpriseRound ? 'Surprise Round! Memorize these characters/numbers:' : 'Memorize these characters/numbers:';
+            messageEl.textContent = isSurpriseRound ? 'Surprise Round! Memorize these characters:' : 'Memorize these characters:';
             numbersEl.textContent = numbers.join(' ');
-            timerEl.textContent = `Time Remaining: ${timeLeft} seconds`;
             playerInputEl.style.display = 'none';
-            playerInputEl.value = '';
-            playerInputEl.placeholder = gameMode === 'number' ? 'Enter the numbers here' : 'Enter the characters here';
+            timerEl.textContent = `Time Remaining: ${timeLeft} seconds`;
 
             const timer = setInterval(() => {
                 timeLeft--;
@@ -332,78 +328,28 @@
         }
 
         function hideNumbers() {
-            messageEl.textContent = 'Enter the characters/numbers you memorized:';
+            messageEl.textContent = 'Enter the characters:';
             numbersEl.textContent = '';
             timerEl.textContent = '';
             playerInputEl.style.display = 'block';
+            playerInputEl.value = '';
+            playerInputEl.placeholder = gameMode === 'number' ? 'Enter numbers here' : 'Enter characters here';
             playerInputEl.focus();
         }
 
-        function submitGuess() {
-            const inputStr = playerInputEl.value.trim();
-            if (gameMode === 'number') {
-                if (!/^[\d\s]+$/.test(inputStr)) {
-                    alert('Please enter only numbers and spaces.');
-                    playerInputEl.value = '';
-                    return;
-                }
-
-                const inputDigits = inputStr.split(/\s+/).filter(s => s !== '');
-                let playerGuess = [];
-
-                if (inputDigits.length === numberCount) {
-                    playerGuess = inputDigits.map(Number);
-                } else if (inputDigits.length === 1 && inputDigits[0].length === numberCount) {
-                    // User entered all digits together without spaces
-                    playerGuess = inputDigits[0].split('').map(Number);
-                }
-
-                if (playerGuess.length === numberCount && playerGuess.every(num => !isNaN(num))) {
-                    playerInputEl.value = ''; // Reset input field after each round
-                    checkGuess(playerGuess);
-                } else {
-                    alert(`Please enter exactly ${numberCount} digits.`);
-                    playerInputEl.value = '';
-                }
-            } else if (gameMode === 'mother') {
-                if (!/^[A-Za-z0-9\s]+$/.test(inputStr)) {
-                    alert('Please enter only letters, numbers, and spaces.');
-                    playerInputEl.value = '';
-                    return;
-                }
-
-                const inputChars = inputStr.split(/\s+/).filter(s => s !== '');
-                let playerGuess = [];
-
-                if (inputChars.length === numberCount) {
-                    playerGuess = inputChars;
-                } else if (inputChars.length === 1 && inputChars[0].length === numberCount) {
-                    // User entered all characters together without spaces
-                    playerGuess = inputChars[0].split('');
-                }
-
-                if (playerGuess.length === numberCount && playerGuess.every(char => /^[A-Za-z0-9]$/.test(char))) {
-                    playerInputEl.value = ''; // Reset input field after each round
-                    checkGuess(playerGuess);
-                } else {
-                    alert(`Please enter exactly ${numberCount} characters (letters or numbers).`);
-                    playerInputEl.value = '';
-                }
-            }
-        }
-
         function checkGuess(playerGuess) {
-            let correctCount = 0;
-            for (let i = 0; i < numberCount; i++) {
+            const correctCount = numbers.reduce((count, char, index) => {
                 if (gameMode === 'number') {
-                    if (numbers[i] === playerGuess[i]) correctCount++;
+                    return char === playerGuess[index] ? count + 1 : count;
                 } else if (gameMode === 'mother') {
-                    if (numbers[i] === playerGuess[i]) correctCount++;
+                    return char === playerGuess[index] ? count + 1 : count;
                 }
-            }
+                return count;
+            }, 0);
+
+            playerInputEl.style.display = 'none';
 
             // Display player's input and correct answer
-            resultsEl.classList.remove('hidden');
             playerAnswerEl.textContent = `Your Input: ${playerGuess.join(' ')}`;
             correctAnswerEl.textContent = `Correct Sequence: ${numbers.join(' ')}`;
 
@@ -420,7 +366,7 @@
                     messageEl.textContent = lives > 0 ? `Wrong! ${lives} ${lives === 1 ? 'life' : 'lives'} left.` : 'Wrong! No lives left.';
                     updateStats();
                     if (lives <= 0) {
-                        endGame();
+                        gameOver();
                     } else {
                         nextRound();
                     }
@@ -459,7 +405,7 @@
             numberCount = originalNumberCount;
 
             if (lives <= 0) {
-                endGame();
+                gameOver();
             } else {
                 nextRound();
             }
@@ -467,28 +413,34 @@
 
         function nextRound() {
             setTimeout(() => {
-                resultsEl.classList.add('hidden');
+                playerAnswerEl.textContent = '';
+                correctAnswerEl.textContent = '';
                 startRound();
             }, 3000);
         }
 
-        function endGame() {
-            resetDisplay();
-            gameOverSection.classList.remove('hidden');
-            gameOverMessageEl.textContent = `Game Over! Your final score: ${score}`;
-            playAgainBtn.textContent = 'Play Again';
+        function gameOver() {
+            messageEl.textContent = 'Game Over! Your final score: ' + score;
+            numbersEl.textContent = '';
+            timerEl.textContent = '';
+            playerAnswerEl.textContent = '';
+            correctAnswerEl.textContent = '';
+            playerInputEl.style.display = 'none';
+            startBtn.textContent = 'Play Again';
+            startBtn.style.display = 'inline-block';
+            modeSelectionEl.style.display = 'block'; // Show Mode Selection
+            numberCount = null; // Reset numberCount for new game
         }
 
         function updateStats() {
-            scoreEl.textContent = `Score: ${score}`;
-            livesEl.textContent = `Lives: ${'♥'.repeat(lives)}`;
+            scoreEl.textContent = 'Score: ' + score;
+            livesEl.textContent = 'Lives: ' + '♥'.repeat(lives);
         }
 
         function resetDisplay() {
             messageEl.textContent = '';
-            timerEl.textContent = '';
             numbersEl.textContent = '';
-            resultsEl.classList.add('hidden');
+            timerEl.textContent = '';
             playerAnswerEl.textContent = '';
             correctAnswerEl.textContent = '';
         }
@@ -499,28 +451,21 @@
             roundsUntilSurprise = randomInt(2, 5);
             isSurpriseRound = false;
             numberCount = null;
-            numbers = [];
             updateStats();
             resetDisplay();
-
-            // Hide Game Over section and show initial setup
-            gameOverSection.classList.add('hidden');
-            modeSelectionSection.classList.remove('hidden');
-            charCountSection.classList.add('hidden');
-            gameplaySection.classList.add('hidden');
-            statsEl.classList.remove('hidden');
+            playerInputEl.value = '';
         }
 
-        function generateSequence(count, mode) {
-            const sequence = [];
+        function generateNumbers(count) {
+            const chars = [];
             for (let i = 0; i < count; i++) {
-                if (mode === 'number') {
-                    sequence.push(randomInt(0, 9));
-                } else if (mode === 'mother') {
-                    sequence.push(randomAlphaNumeric());
+                if (gameMode === 'number') {
+                    chars.push(randomInt(0, 9));
+                } else if (gameMode === 'mother') {
+                    chars.push(randomAlphaNumeric());
                 }
             }
-            return sequence;
+            return chars;
         }
 
         function randomAlphaNumeric() {
