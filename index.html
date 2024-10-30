@@ -137,9 +137,17 @@
             font-size: 1rem;
             color: #333;
             margin-bottom: 5px;
+            text-align: center; /* Center the label */
         }
 
         #setup-inputs {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px; /* Space between inputs */
+        }
+
+        #setup-inputs .input-group {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -151,13 +159,27 @@
             width: 60px;
             border: 2px solid #1e90ff;
             border-radius: 5px;
-            margin-bottom: 15px;
             text-align: center;
         }
 
         #setup-inputs input:focus {
             outline: none;
             border-color: #00bfff;
+        }
+
+        #confirm-setup-btn {
+            font-size: 1.125rem; /* 18px */
+            padding: 0.625rem 1.25rem; /* 10px 20px */
+            border: none;
+            background-color: #1e90ff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #confirm-setup-btn:hover {
+            background-color: #00bfff;
         }
 
         /* Stats */
@@ -344,13 +366,16 @@
             <!-- Setup Section: Number Count and Memorization Time -->
             <div id="setup">
                 <div id="setup-inputs">
-                    <label for="number-count-input">How many characters do you want to memorize?</label>
-                    <input type="number" id="number-count-input" min="1" max="20" placeholder="e.g., 10">
-                    
-                    <label for="timer-input">Memorization Time (seconds):</label>
-                    <input type="number" id="timer-input" min="5" max="60" value="10" placeholder="e.g., 10">
+                    <div class="input-group">
+                        <label for="number-count-input">How many characters do you want to memorize?</label>
+                        <input type="number" id="number-count-input" min="1" max="20" placeholder="e.g., 10">
+                    </div>
+                    <div class="input-group">
+                        <label for="timer-input">Memorization Time (seconds):</label>
+                        <input type="number" id="timer-input" min="5" max="60" value="10" placeholder="e.g., 10">
+                    </div>
                 </div>
-                <button id="confirm-setup-btn" class="mode-button">Confirm</button>
+                <button id="confirm-setup-btn">Confirm</button>
             </div>
             <!-- Player's input and correct answer -->
             <div id="results">
@@ -415,12 +440,12 @@
             modeButtons.forEach(btn => btn.classList.remove('selected'));
             // Add 'selected' class to the clicked button
             button.classList.add('selected');
-            // Enable the Start button if mode is selected and timer is valid
+            // Enable the Start button if mode is selected
             enableStartButton();
         }
 
         function enableStartButton() {
-            if (gameMode && isSetupValid()) {
+            if (gameMode) {
                 startBtn.classList.add('enabled');
                 startBtn.style.cursor = 'pointer';
                 startBtn.style.backgroundColor = '#1e90ff';
@@ -783,14 +808,7 @@
             return placeholders[type] || 'Enter input here';
         }
 
-        function isSetupValid() {
-            const count = parseInt(numberCountInputEl.value);
-            const time = parseInt(timerInputEl.value);
-            return Number.isInteger(count) && count >= 1 && count <= 20 &&
-                   Number.isInteger(time) && time >= 5 && time <= 60;
-        }
-
-        // Initial Setup: Enable Start button based on mode selection and default timer
+        // Initial Setup: Disable Start button until a mode is selected
         window.onload = () => {
             enableStartButton();
         };
