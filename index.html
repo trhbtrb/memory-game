@@ -56,7 +56,6 @@
             padding: 0.625rem; /* 10px */
             width: 80%;
             box-sizing: border-box;
-            margin-bottom: 10px; /* Reduced margin to accommodate difficulty description */
             border: 2px solid #1e90ff;
             border-radius: 5px;
             display: none; /* Hide input field initially */
@@ -71,9 +70,10 @@
         #difficulty-description {
             font-size: 1rem;
             color: #555;
+            margin-top: 20px;
             margin-bottom: 20px;
             line-height: 1.5;
-            /* Removed display: none; to make it visible within setup */
+            text-align: center;
         }
 
         #buttons {
@@ -348,13 +348,6 @@
             <p id="numbers"></p>
             <!-- Input field for player guesses -->
             <input type="text" id="player-input" placeholder="Enter numbers here" maxlength="100">
-            <!-- Difficulty Description -->
-            <p id="difficulty-description">
-                <strong>Difficulty Levels:</strong><br>
-                8 or below: It's okay to be weak<br>
-                9 - 15: Good stuff<br>
-                16 or above: Wanna be god?
-            </p>
             <!-- Buttons -->
             <div id="buttons">
                 <!-- Mode Selection Buttons -->
@@ -371,12 +364,18 @@
                         <label for="number-count-input">How many characters do you want to memorize?</label>
                         <input type="number" id="number-count-input" min="1" max="20" placeholder="e.g., 10">
                     </div>
-                    <!-- Difficulty Description is already included above -->
                     <div class="input-group">
                         <label for="timer-input">Memorization Time (seconds):</label>
                         <input type="number" id="timer-input" min="5" max="50" value="10" placeholder="e.g., 10">
                     </div>
                 </div>
+                <!-- Difficulty Description -->
+                <p id="difficulty-description">
+                    <strong>Difficulty Levels:</strong><br>
+                    8 or below: It's okay to be weak<br>
+                    9 - 15: Good stuff<br>
+                    16 or above: Wanna be god?
+                </p>
                 <button id="confirm-setup-btn">Confirm</button>
             </div>
             <!-- Player's input and correct answer -->
