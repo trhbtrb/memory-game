@@ -73,7 +73,7 @@
             color: #555;
             margin-bottom: 20px;
             line-height: 1.5;
-            display: none; /* Hide initially, show when prompting for number count */
+            /* Removed display: none; to make it visible within setup */
         }
 
         #buttons {
@@ -371,9 +371,10 @@
                         <label for="number-count-input">How many characters do you want to memorize?</label>
                         <input type="number" id="number-count-input" min="1" max="20" placeholder="e.g., 10">
                     </div>
+                    <!-- Difficulty Description is already included above -->
                     <div class="input-group">
                         <label for="timer-input">Memorization Time (seconds):</label>
-                        <input type="number" id="timer-input" min="5" max="60" value="10" placeholder="e.g., 10">
+                        <input type="number" id="timer-input" min="5" max="50" value="10" placeholder="e.g., 10">
                     </div>
                 </div>
                 <button id="confirm-setup-btn">Confirm</button>
@@ -417,7 +418,7 @@
         const modeNumberBtn = document.getElementById('mode-number');
         const modeMotherBtn = document.getElementById('mode-mother');
         const modeButtons = document.querySelectorAll('.mode-button');
-        const difficultyDescriptionEl = document.getElementById('difficulty-description'); // Updated Element Reference
+        const difficultyDescriptionEl = document.getElementById('difficulty-description'); // Difficulty Description
         const setupDiv = document.getElementById('setup');
         const numberCountInputEl = document.getElementById('number-count-input');
         const timerInputEl = document.getElementById('timer-input');
@@ -479,8 +480,8 @@
 
             // Read and validate memorization time
             const time = parseInt(timerInputEl.value);
-            if (!Number.isInteger(time) || time < 5 || time > 60) {
-                alert('Please enter a valid memorization time between 5 and 60 seconds.');
+            if (!Number.isInteger(time) || time < 5 || time > 50) {
+                alert('Please enter a valid memorization time between 5 and 50 seconds.');
                 timerInputEl.focus();
                 return;
             }
