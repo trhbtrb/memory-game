@@ -125,6 +125,32 @@
             background-color: #00bfff;
         }
 
+        /* Settings Section */
+        #settings {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        #settings label {
+            font-size: 1rem;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        #timer-input {
+            font-size: 1rem;
+            padding: 0.4rem;
+            width: 60px;
+            border: 2px solid #1e90ff;
+            border-radius: 5px;
+        }
+
+        #timer-input:focus {
+            outline: none;
+            border-color: #00bfff;
+        }
+
+        /* Stats */
         #stats {
             font-size: 1.125rem; /* 18px */
             margin-top: 20px;
@@ -195,6 +221,10 @@
                 margin: 0.25rem; /* 4px */
             }
 
+            #settings label, #settings input {
+                font-size: 0.9rem;
+            }
+
             #stats {
                 font-size: 1rem;
             }
@@ -255,6 +285,10 @@
                 margin: 0.2rem; /* 3.2px */
             }
 
+            #settings label, #settings input {
+                font-size: 0.8rem;
+            }
+
             #stats {
                 font-size: 0.875rem;
             }
@@ -290,6 +324,11 @@
             </p>
             <!-- Buttons -->
             <div id="buttons">
+                <!-- Settings Section -->
+                <div id="settings">
+                    <label for="timer-input">Memorization Time (seconds):</label>
+                    <input type="number" id="timer-input" min="5" max="60" value="10">
+                </div>
                 <!-- Mode Selection Buttons -->
                 <div id="mode-selection">
                     <button class="mode-button" id="mode-number">Numbers Only</button>
@@ -321,6 +360,7 @@
         let roundsUntilSurprise = randomInt(2, 5);
         let isSurpriseRound = false;
         let gameMode = null; // No mode selected initially
+        let memorizeTime = 10; // Default memorization time in seconds
 
         // HTML Elements
         const messageEl = document.getElementById('message');
@@ -336,16 +376,18 @@
         const modeMotherBtn = document.getElementById('mode-mother');
         const modeButtons = document.querySelectorAll('.mode-button');
         const difficultyDescriptionEl = document.getElementById('difficulty-description'); // Updated Element Reference
+        const timerInputEl = document.getElementById('timer-input'); // Timer input element
 
         // Event Listeners
         modeNumberBtn.addEventListener('click', () => selectMode('number', modeNumberBtn));
         modeMotherBtn.addEventListener('click', () => selectMode('mother', modeMotherBtn));
-        startBtn.addEventListener('click', promptNumberCount);
+        startBtn.addEventListener('click', handleStartButton);
         playerInputEl.addEventListener('keyup', function(event) {
             if (event.key === 'Enter') {
                 submitInput();
             }
         });
+        timerInputEl.addEventListener('change', validateTimerInput);
 
         // Functions
         function selectMode(mode, button) {
@@ -354,15 +396,55 @@
             modeButtons.forEach(btn => btn.classList.remove('selected'));
             // Add 'selected' class to the clicked button
             button.classList.add('selected');
-            // Enable the Start button
-            startBtn.classList.add('enabled');
-            startBtn.style.cursor = 'pointer';
-            startBtn.style.backgroundColor = '#1e90ff';
-            startBtn.textContent = 'Start Game';
+            // Enable the Start button if mode is selected and timer is valid
+            if (isTimerValid()) {
+                enableStartButton();
+            }
+        }
+
+        function handleStartButton() {
+            if (!gameMode) return; // Do nothing if no mode is selected
+            // Read and validate memorization time
+            const time = parseInt(timerInputEl.value);
+            if (Number.isInteger(time) && time >= 5 && time <= 60) {
+                memorizeTime = time;
+                startBtn.textContent = 'Set Number Count';
+                promptNumberCount();
+            } else {
+                alert('Please enter a valid memorization time between 5 and 60 seconds.');
+            }
+        }
+
+        function enableStartButton() {
+            if (gameMode && isTimerValid()) {
+                startBtn.classList.add('enabled');
+                startBtn.style.cursor = 'pointer';
+                startBtn.style.backgroundColor = '#1e90ff';
+            } else {
+                startBtn.classList.remove('enabled');
+                startBtn.style.backgroundColor = '#a9a9a9';
+                startBtn.style.cursor = 'not-allowed';
+            }
+        }
+
+        function isTimerValid() {
+            const time = parseInt(timerInputEl.value);
+            return Number.isInteger(time) && time >= 5 && time <= 60;
+        }
+
+        function validateTimerInput() {
+            if (isTimerValid()) {
+                if (gameMode) {
+                    enableStartButton();
+                }
+            } else {
+                startBtn.classList.remove('enabled');
+                startBtn.style.backgroundColor = '#a9a9a9';
+                startBtn.style.cursor = 'not-allowed';
+            }
         }
 
         function promptNumberCount() {
-            if (!gameMode) return; // Do nothing if no mode is selected
             resetGame();
             messageEl.textContent = getDynamicMessage('promptCount');
             playerInputEl.placeholder = getDynamicPlaceholder('promptCount');
@@ -370,6 +452,7 @@
             playerInputEl.style.display = 'block';
             difficultyDescriptionEl.style.display = 'block'; // Show difficulty description
             document.getElementById('mode-selection').style.display = 'none'; // Hide Mode Selection
+            document.getElementById('settings').style.display = 'none'; // Hide Settings
             startBtn.style.display = 'none';
             playerInputEl.focus();
         }
@@ -473,7 +556,7 @@
         }
 
         function displayNumbers() {
-            let timeLeft = isSurpriseRound ? 10 : 11;
+            let timeLeft = memorizeTime;
             messageEl.textContent = isSurpriseRound ? getDynamicMessage('surpriseRound') : getDynamicMessage('memorize');
             numbersEl.textContent = numbers.join(' ');
             playerInputEl.style.display = 'none';
@@ -590,13 +673,17 @@
             playerInputEl.style.display = 'none';
             startBtn.textContent = 'Play Again';
             startBtn.classList.remove('enabled');
-            startBtn.style.backgroundColor = '#a9a9a9';
-            startBtn.style.cursor = 'not-allowed';
+            startBtn.style.backgroundColor = '#1e90ff';
+            startBtn.style.cursor = 'pointer';
             startBtn.style.display = 'inline-block';
             document.getElementById('mode-selection').style.display = 'block'; // Show Mode Selection
+            document.getElementById('settings').style.display = 'block'; // Show Settings
             modeButtons.forEach(btn => btn.classList.remove('selected')); // Deselect mode buttons
             gameMode = null; // Reset gameMode
             numberCount = null; // Reset numberCount for new game
+            // Reset timer input to default value
+            timerInputEl.value = '10';
+            memorizeTime = 10;
         }
 
         function updateStats() {
