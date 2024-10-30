@@ -39,7 +39,7 @@
             margin-bottom: 20px;
         }
 
-        #timer {
+        #timer-display {
             font-size: 1.25rem;
             color: #dc143c;
             margin-bottom: 20px;
@@ -125,27 +125,37 @@
             background-color: #00bfff;
         }
 
-        /* Settings Section */
-        #settings {
+        /* Setup Section */
+        #setup {
+            display: none; /* Hidden initially */
             margin-bottom: 20px;
-            text-align: left;
+            text-align: center;
         }
 
-        #settings label {
+        #setup label {
+            display: block;
             font-size: 1rem;
             color: #333;
-            margin-right: 10px;
+            margin-bottom: 5px;
         }
 
-        #timer-input {
+        #setup-inputs {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #setup-inputs input {
             font-size: 1rem;
             padding: 0.4rem;
             width: 60px;
             border: 2px solid #1e90ff;
             border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
         }
 
-        #timer-input:focus {
+        #setup-inputs input:focus {
             outline: none;
             border-color: #00bfff;
         }
@@ -192,7 +202,7 @@
                 font-size: 1.25rem;
             }
 
-            #timer {
+            #timer-display {
                 font-size: 1.125rem;
             }
 
@@ -221,7 +231,7 @@
                 margin: 0.25rem; /* 4px */
             }
 
-            #settings label, #settings input {
+            #setup label, #setup input {
                 font-size: 0.9rem;
             }
 
@@ -256,7 +266,7 @@
                 font-size: 1.1rem;
             }
 
-            #timer {
+            #timer-display {
                 font-size: 1rem;
             }
 
@@ -285,7 +295,7 @@
                 margin: 0.2rem; /* 3.2px */
             }
 
-            #settings label, #settings input {
+            #setup label, #setup input {
                 font-size: 0.8rem;
             }
 
@@ -309,8 +319,8 @@
         <div id="game-area">
             <!-- Game messages -->
             <p id="message">Select a mode and start the game!</p>
-            <!-- Timer -->
-            <p id="timer"></p>
+            <!-- Timer Display -->
+            <p id="timer-display"></p>
             <!-- Numbers or Characters to memorize -->
             <p id="numbers"></p>
             <!-- Input field for player guesses -->
@@ -324,17 +334,23 @@
             </p>
             <!-- Buttons -->
             <div id="buttons">
-                <!-- Settings Section -->
-                <div id="settings">
-                    <label for="timer-input">Memorization Time (seconds):</label>
-                    <input type="number" id="timer-input" min="5" max="60" value="10">
-                </div>
                 <!-- Mode Selection Buttons -->
                 <div id="mode-selection">
                     <button class="mode-button" id="mode-number">Numbers Only</button>
                     <button class="mode-button" id="mode-mother">Mother Mode</button>
                 </div>
                 <button id="start-btn">Start Game</button>
+            </div>
+            <!-- Setup Section: Number Count and Memorization Time -->
+            <div id="setup">
+                <div id="setup-inputs">
+                    <label for="number-count-input">How many characters do you want to memorize?</label>
+                    <input type="number" id="number-count-input" min="1" max="20" placeholder="e.g., 10">
+                    
+                    <label for="timer-input">Memorization Time (seconds):</label>
+                    <input type="number" id="timer-input" min="5" max="60" value="10" placeholder="e.g., 10">
+                </div>
+                <button id="confirm-setup-btn" class="mode-button">Confirm</button>
             </div>
             <!-- Player's input and correct answer -->
             <div id="results">
@@ -369,25 +385,28 @@
         const startBtn = document.getElementById('start-btn');
         const scoreEl = document.getElementById('score');
         const livesEl = document.getElementById('lives');
-        const timerEl = document.getElementById('timer');
+        const timerDisplayEl = document.getElementById('timer-display');
         const playerAnswerEl = document.getElementById('player-answer');
         const correctAnswerEl = document.getElementById('correct-answer');
         const modeNumberBtn = document.getElementById('mode-number');
         const modeMotherBtn = document.getElementById('mode-mother');
         const modeButtons = document.querySelectorAll('.mode-button');
         const difficultyDescriptionEl = document.getElementById('difficulty-description'); // Updated Element Reference
-        const timerInputEl = document.getElementById('timer-input'); // Timer input element
+        const setupDiv = document.getElementById('setup');
+        const numberCountInputEl = document.getElementById('number-count-input');
+        const timerInputEl = document.getElementById('timer-input');
+        const confirmSetupBtn = document.getElementById('confirm-setup-btn');
 
         // Event Listeners
         modeNumberBtn.addEventListener('click', () => selectMode('number', modeNumberBtn));
         modeMotherBtn.addEventListener('click', () => selectMode('mother', modeMotherBtn));
-        startBtn.addEventListener('click', handleStartButton);
+        startBtn.addEventListener('click', showSetup);
+        confirmSetupBtn.addEventListener('click', confirmSetup);
         playerInputEl.addEventListener('keyup', function(event) {
             if (event.key === 'Enter') {
                 submitInput();
             }
         });
-        timerInputEl.addEventListener('change', validateTimerInput);
 
         // Functions
         function selectMode(mode, button) {
@@ -397,26 +416,11 @@
             // Add 'selected' class to the clicked button
             button.classList.add('selected');
             // Enable the Start button if mode is selected and timer is valid
-            if (isTimerValid()) {
-                enableStartButton();
-            }
-        }
-
-        function handleStartButton() {
-            if (!gameMode) return; // Do nothing if no mode is selected
-            // Read and validate memorization time
-            const time = parseInt(timerInputEl.value);
-            if (Number.isInteger(time) && time >= 5 && time <= 60) {
-                memorizeTime = time;
-                startBtn.textContent = 'Set Number Count';
-                promptNumberCount();
-            } else {
-                alert('Please enter a valid memorization time between 5 and 60 seconds.');
-            }
+            enableStartButton();
         }
 
         function enableStartButton() {
-            if (gameMode && isTimerValid()) {
+            if (gameMode && isSetupValid()) {
                 startBtn.classList.add('enabled');
                 startBtn.style.cursor = 'pointer';
                 startBtn.style.backgroundColor = '#1e90ff';
@@ -427,59 +431,115 @@
             }
         }
 
-        function isTimerValid() {
-            const time = parseInt(timerInputEl.value);
-            return Number.isInteger(time) && time >= 5 && time <= 60;
-        }
-
-        function validateTimerInput() {
-            if (isTimerValid()) {
-                if (gameMode) {
-                    enableStartButton();
-                }
-            } else {
-                startBtn.classList.remove('enabled');
-                startBtn.style.backgroundColor = '#a9a9a9';
-                startBtn.style.cursor = 'not-allowed';
-            }
-        }
-
-        function promptNumberCount() {
-            resetGame();
-            messageEl.textContent = getDynamicMessage('promptCount');
-            playerInputEl.placeholder = getDynamicPlaceholder('promptCount');
-            playerInputEl.value = '';
-            playerInputEl.style.display = 'block';
-            difficultyDescriptionEl.style.display = 'block'; // Show difficulty description
-            document.getElementById('mode-selection').style.display = 'none'; // Hide Mode Selection
-            document.getElementById('settings').style.display = 'none'; // Hide Settings
+        function showSetup() {
+            if (!gameMode) return; // Do nothing if no mode is selected
+            // Hide Mode Selection Buttons and Start Button
+            document.getElementById('mode-selection').style.display = 'none';
             startBtn.style.display = 'none';
-            playerInputEl.focus();
+            // Show Setup Section
+            setupDiv.style.display = 'block';
+            messageEl.textContent = 'Set Up Your Game';
+            numberCountInputEl.focus();
+        }
+
+        function confirmSetup() {
+            // Read and validate number count
+            const count = parseInt(numberCountInputEl.value);
+            if (!Number.isInteger(count) || count < 1 || count > 20) {
+                alert('Please enter a valid number of characters between 1 and 20.');
+                numberCountInputEl.focus();
+                return;
+            }
+
+            // Read and validate memorization time
+            const time = parseInt(timerInputEl.value);
+            if (!Number.isInteger(time) || time < 5 || time > 60) {
+                alert('Please enter a valid memorization time between 5 and 60 seconds.');
+                timerInputEl.focus();
+                return;
+            }
+
+            numberCount = count;
+            memorizeTime = time;
+            setupDiv.style.display = 'none';
+            startGame();
         }
 
         function startGame() {
+            resetGameStats();
             updateStats();
             resetDisplay();
-            playerInputEl.style.display = 'none';
-            difficultyDescriptionEl.style.display = 'none'; // Hide difficulty description during game
             startRound();
+        }
+
+        function resetGameStats() {
+            score = 0;
+            lives = 3;
+            roundsUntilSurprise = randomInt(2, 5);
+            isSurpriseRound = false;
+            updateStats();
+        }
+
+        function resetDisplay() {
+            messageEl.textContent = '';
+            numbersEl.textContent = '';
+            timerDisplayEl.textContent = '';
+            playerAnswerEl.textContent = '';
+            correctAnswerEl.textContent = '';
+        }
+
+        function startRound() {
+            if (lives <= 0) {
+                gameOver();
+                return;
+            }
+
+            resetDisplay();
+            if (roundsUntilSurprise === 0) {
+                isSurpriseRound = true;
+                roundsUntilSurprise = randomInt(2, 5);
+                originalNumberCount = numberCount; // Save the original number count
+                numberCount = getRandomOddNumber(1, 13); // Random odd number between 1 and 13
+            } else {
+                isSurpriseRound = false;
+                roundsUntilSurprise--;
+            }
+
+            numbers = generateNumbers(numberCount);
+            displayNumbers();
+        }
+
+        function displayNumbers() {
+            let timeLeft = memorizeTime;
+            messageEl.textContent = isSurpriseRound ? getDynamicMessage('surpriseRound') : getDynamicMessage('memorize');
+            numbersEl.textContent = numbers.join(' ');
+            playerInputEl.style.display = 'none';
+            timerDisplayEl.textContent = `Time Remaining: ${timeLeft} seconds`;
+
+            const timer = setInterval(() => {
+                timeLeft--;
+                timerDisplayEl.textContent = `Time Remaining: ${timeLeft} seconds`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    hideNumbers();
+                }
+            }, 1000);
+        }
+
+        function hideNumbers() {
+            messageEl.textContent = getDynamicMessage('enterCharacters');
+            numbersEl.textContent = '';
+            timerDisplayEl.textContent = '';
+            playerInputEl.style.display = 'block';
+            playerInputEl.value = '';
+            playerInputEl.placeholder = getDynamicPlaceholder('input');
+            playerInputEl.focus();
         }
 
         function submitInput() {
             if (numberCount === null) {
-                // Set the number of characters to memorize
-                const count = parseInt(playerInputEl.value);
-                if (Number.isInteger(count) && count > 0) {
-                    numberCount = count;
-                    playerInputEl.value = '';
-                    playerInputEl.placeholder = getDynamicPlaceholder('input');
-                    playerInputEl.style.display = 'none';
-                    difficultyDescriptionEl.style.display = 'none'; // Hide after setting number count
-                    startGame();
-                } else {
-                    messageEl.textContent = 'Please enter a valid positive integer.';
-                    playerInputEl.value = '';
-                }
+                // Not used in current setup
+                return;
             } else if (numbers.length > 0) {
                 // Player is submitting their guess
                 const inputStr = playerInputEl.value.trim();
@@ -532,54 +592,6 @@
                     }
                 }
             }
-        }
-
-        function startRound() {
-            if (lives <= 0) {
-                gameOver();
-                return;
-            }
-
-            resetDisplay();
-            if (roundsUntilSurprise === 0) {
-                isSurpriseRound = true;
-                roundsUntilSurprise = randomInt(2, 5);
-                originalNumberCount = numberCount; // Save the original number count
-                numberCount = getRandomOddNumber(1, 13); // Random odd number between 1 and 13
-            } else {
-                isSurpriseRound = false;
-                roundsUntilSurprise--;
-            }
-
-            numbers = generateNumbers(numberCount);
-            displayNumbers();
-        }
-
-        function displayNumbers() {
-            let timeLeft = memorizeTime;
-            messageEl.textContent = isSurpriseRound ? getDynamicMessage('surpriseRound') : getDynamicMessage('memorize');
-            numbersEl.textContent = numbers.join(' ');
-            playerInputEl.style.display = 'none';
-            timerEl.textContent = `Time Remaining: ${timeLeft} seconds`;
-
-            const timer = setInterval(() => {
-                timeLeft--;
-                timerEl.textContent = `Time Remaining: ${timeLeft} seconds`;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    hideNumbers();
-                }
-            }, 1000);
-        }
-
-        function hideNumbers() {
-            messageEl.textContent = getDynamicMessage('enterCharacters');
-            numbersEl.textContent = '';
-            timerEl.textContent = '';
-            playerInputEl.style.display = 'block';
-            playerInputEl.value = '';
-            playerInputEl.placeholder = getDynamicPlaceholder('input');
-            playerInputEl.focus();
         }
 
         function checkGuess(playerGuess) {
@@ -667,7 +679,7 @@
         function gameOver() {
             messageEl.textContent = `Game Over! Your final score: ${score}`;
             numbersEl.textContent = '';
-            timerEl.textContent = '';
+            timerDisplayEl.textContent = '';
             playerAnswerEl.textContent = '';
             correctAnswerEl.textContent = '';
             playerInputEl.style.display = 'none';
@@ -676,8 +688,8 @@
             startBtn.style.backgroundColor = '#1e90ff';
             startBtn.style.cursor = 'pointer';
             startBtn.style.display = 'inline-block';
+            setupDiv.style.display = 'none'; // Hide Setup Section
             document.getElementById('mode-selection').style.display = 'block'; // Show Mode Selection
-            document.getElementById('settings').style.display = 'block'; // Show Settings
             modeButtons.forEach(btn => btn.classList.remove('selected')); // Deselect mode buttons
             gameMode = null; // Reset gameMode
             numberCount = null; // Reset numberCount for new game
@@ -689,25 +701,6 @@
         function updateStats() {
             scoreEl.textContent = 'Score: ' + score;
             livesEl.textContent = 'Lives: ' + '♥'.repeat(lives);
-        }
-
-        function resetDisplay() {
-            messageEl.textContent = '';
-            numbersEl.textContent = '';
-            timerEl.textContent = '';
-            playerAnswerEl.textContent = '';
-            correctAnswerEl.textContent = '';
-        }
-
-        function resetGame() {
-            score = 0;
-            lives = 3;
-            roundsUntilSurprise = randomInt(2, 5);
-            isSurpriseRound = false;
-            numberCount = null;
-            updateStats();
-            resetDisplay();
-            playerInputEl.value = '';
         }
 
         function generateNumbers(count) {
@@ -789,6 +782,18 @@
 
             return placeholders[type] || 'Enter input here';
         }
+
+        function isSetupValid() {
+            const count = parseInt(numberCountInputEl.value);
+            const time = parseInt(timerInputEl.value);
+            return Number.isInteger(count) && count >= 1 && count <= 20 &&
+                   Number.isInteger(time) && time >= 5 && time <= 60;
+        }
+
+        // Initial Setup: Enable Start button based on mode selection and default timer
+        window.onload = () => {
+            enableStartButton();
+        };
     </script>
 </body>
 </html>
