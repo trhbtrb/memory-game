@@ -347,7 +347,7 @@
             <!-- Numbers or Characters to memorize -->
             <p id="numbers"></p>
             <!-- Input field for player guesses -->
-            <input type="text" id="player-input" placeholder="Enter numbers here" maxlength="100">
+            <input type="text" id="player-input" placeholder="Enter numbers here" maxlength="1000">
             <!-- Buttons -->
             <div id="buttons">
                 <!-- Mode Selection Buttons -->
@@ -362,7 +362,7 @@
                 <div id="setup-inputs">
                     <div class="input-group">
                         <label for="number-count-input">How many characters do you want to memorize?</label>
-                        <input type="number" id="number-count-input" min="1" max="20" placeholder="e.g., 10">
+                        <input type="number" id="number-count-input" min="1" placeholder="e.g., 10">
                     </div>
                     <div class="input-group">
                         <label for="timer-input">Memorization Time (seconds):</label>
@@ -471,8 +471,8 @@
         function confirmSetup() {
             // Read and validate number count
             const count = parseInt(numberCountInputEl.value);
-            if (!Number.isInteger(count) || count < 1 || count > 20) {
-                alert('Please enter a valid number of characters between 1 and 20.');
+            if (!Number.isInteger(count) || count < 1) {
+                alert('Please enter a valid number of characters greater than 0.');
                 numberCountInputEl.focus();
                 return;
             }
