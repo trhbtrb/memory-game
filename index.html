@@ -9,6 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
     <style>
         /* CSS Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #e9f5ff;
@@ -33,6 +39,7 @@
         #main-title {
             color: #333;
             font-size: 2rem;
+            margin-bottom: 20px;
         }
 
         #message {
@@ -47,11 +54,15 @@
             margin-bottom: 20px;
         }
 
+        /* Applied Roboto Mono to #numbers and #player-input */
+        #numbers, #player-input {
+            font-family: 'Roboto Mono', 'Consolas', 'Courier New', monospace;
+        }
+
         #numbers {
             font-size: 2rem;
             color: #1e90ff;
             margin-bottom: 20px;
-            font-family: 'Roboto Mono', 'Consolas', 'Courier New', monospace; /* Updated Font */
         }
 
         #player-input {
