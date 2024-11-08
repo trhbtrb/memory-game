@@ -368,6 +368,7 @@
                 <div id="mode-selection">
                     <button class="mode-button" id="mode-number">Numbers Only</button>
                     <button class="mode-button" id="mode-mother">Mother Mode</button>
+                    <button class="mode-button" id="mode-words">Words Mode</button>
                 </div>
                 <button id="start-btn">Start Game</button>
             </div>
@@ -430,6 +431,7 @@
         const correctAnswerEl = document.getElementById('correct-answer');
         const modeNumberBtn = document.getElementById('mode-number');
         const modeMotherBtn = document.getElementById('mode-mother');
+        const modeWordsBtn = document.getElementById('mode-words');
         const modeButtons = document.querySelectorAll('.mode-button');
         const difficultyDescriptionEl = document.getElementById('difficulty-description'); // Difficulty Description
         const setupDiv = document.getElementById('setup');
@@ -440,6 +442,7 @@
         // Event Listeners
         modeNumberBtn.addEventListener('click', () => selectMode('number', modeNumberBtn));
         modeMotherBtn.addEventListener('click', () => selectMode('mother', modeMotherBtn));
+        modeWordsBtn.addEventListener('click', () => selectMode('words', modeWordsBtn));
         startBtn.addEventListener('click', showSetup);
         confirmSetupBtn.addEventListener('click', confirmSetup);
         playerInputEl.addEventListener('keyup', function(event) {
@@ -471,16 +474,28 @@
             }
         }
 
+
         function showSetup() {
             if (!gameMode) return; // Do nothing if no mode is selected
-            // Hide Mode Selection Buttons and Start Button
+                // Hide Mode Selection Buttons and Start Button
             document.getElementById('mode-selection').style.display = 'none';
             startBtn.style.display = 'none';
             // Show Setup Section
             setupDiv.style.display = 'block';
             messageEl.textContent = 'Set Up Your Game';
             numberCountInputEl.focus();
+
+            // Update the label text based on the selected game mode
+            const numberCountLabel = document.querySelector('label[for="number-count-input"]');
+            if (gameMode === 'words') {
+                numberCountLabel.textContent = 'How many words do you want to memorize?';
+            } else if (gameMode === 'number') {
+                numberCountLabel.textContent = 'How many numbers do you want to memorize?';
+            } else if (gameMode === 'mother') {
+                numberCountLabel.textContent = 'How many characters do you want to memorize?';
+            }
         }
+
 
         function confirmSetup() {
             // Read and validate number count
@@ -576,6 +591,7 @@
             playerInputEl.focus();
         }
 
+
         function submitInput() {
             if (numberCount === null) {
                 // Not used in current setup
@@ -583,7 +599,9 @@
             } else if (numbers.length > 0) {
                 // Player is submitting their guess
                 const inputStr = playerInputEl.value.trim();
+
                 if (gameMode === 'number') {
+                    // Code for 'number' mode
                     if (/^[\d\s]+$/.test(inputStr)) {
                         const inputDigits = inputStr.split(/\s+/).filter(s => s !== '');
                         let playerGuess = [];
@@ -607,7 +625,7 @@
                         playerInputEl.value = '';
                     }
                 } else if (gameMode === 'mother') {
-                    // Allow letters and numbers, case-insensitive
+                    // Code for 'mother' mode
                     if (/^[A-Za-z0-9\s]+$/.test(inputStr)) {
                         const inputChars = inputStr.split(/\s+/).filter(s => s !== '');
                         let playerGuess = [];
@@ -630,16 +648,36 @@
                         messageEl.textContent = 'Please enter only letters, numbers, and spaces.';
                         playerInputEl.value = '';
                     }
+                } else if (gameMode === 'words') {
+                    // Code for 'words' mode
+                    if (/^[A-Za-z\s]+$/.test(inputStr)) {
+                        const inputWords = inputStr.split(/\s+/).filter(s => s !== '');
+                        let playerGuess = [];
+
+                        if (inputWords.length === numberCount) {
+                            playerGuess = inputWords.map(word => word.toLowerCase());
+                            playerInputEl.value = ''; // Reset input field after each round
+                            checkGuess(playerGuess);
+                        } else {
+                            messageEl.textContent = `Please enter exactly ${numberCount} words.`;
+                            playerInputEl.value = '';
+                        }
+                    } else {
+                        messageEl.textContent = 'Please enter only letters and spaces.';
+                        playerInputEl.value = '';
+                    }
                 }
             }
         }
 
+
+
         function checkGuess(playerGuess) {
-            const correctCount = numbers.reduce((count, char, index) => {
-                if (gameMode === 'number') {
+            const correctCount = numbers.reduce((count, item, index) => {
+                if (gameMode === 'number' || gameMode === 'mother') {
                     return char === playerGuess[index] ? count + 1 : count;
-                } else if (gameMode === 'mother') {
-                    return char === playerGuess[index] ? count + 1 : count;
+                }else if (gameMode === 'words') {
+                        return item.toLowerCase() === playerGuess[index].toLowerCase() ? count + 1 : count;
                 }
                 return count;
             }, 0);
@@ -745,15 +783,101 @@
 
         function generateNumbers(count) {
             const chars = [];
-            for (let i = 0; i < count; i++) {
-                if (gameMode === 'number') {
-                    chars.push(randomInt(0, 9));
-                } else if (gameMode === 'mother') {
-                    chars.push(randomAlphaNumeric());
+            if (gameMode === 'words') {
+                // Add your own words generation logic here
+                const wordsList = ['apple', 'banana', 'cherry', 'dog', 'elephant', 'flower', 'guitar', 'house', 'island', 'jacket', 'kangaroo', 'lion', 'mountain', 'notebook', 'ocean', 'piano', 'queen', 'rainbow', 'sunflower', 'tree', 'umbrella', 'violin', 'whale', 'xylophone', 'yacht', 'zebra', 'airplane', 'boat', 'camera', 'dolphin', 'engine', 'forest', 'garden', 'helicopter', 'iceberg', 'jungle', 'koala', 'lemon', 'microphone', 'nest', 'orchestra', 'pumpkin', 'quartz', 'rocket', 'saxophone', 'telescope', 'universe', 'volcano', 'waterfall', 'xerox', 'yogurt', 'zeppelin', 'anchor', 'bridge', 'castle', 'desert', 'eagle', 'fountain', 'galaxy', 'horizon', 'igloo', 'jewel', 'kite', 'lighthouse', 'mirror', 'nebula', 'oasis', 'palace', 'quill', 'river', 'statue', 'temple', 'valley', 'windmill', 'x-ray', 'yarn', 'zenith', 'asteroid', 'beach', 'canyon', 'dinosaur', 'eclipse', 'feather', 'glacier', 'harbor', 'insect', 'jewel', 'kingdom', 'lagoon', 'meadow', 'nebula', 'orchid', 'paradise', 'quarry', 'reef', 'savannah', 'tundra', 'unicorn', 'vortex', 'waterfall', 'xenon', 'yacht', 'zeppelin', 'algebra', 'bicycle', 'compass', 'drama', 'equator', 'festival', 'gravity', 'horizon', 'internet', 'jungle', 'kilogram', 'language', 'meteor', 'neutron', 'oxygen', 'planet', 'quantum', 'robot', 'satellite', 'tornado', 'universe', 'voltage', 'weather', 'xenophobia', 'yesterday', 'zodiac', 'alchemy', 'biology', 'chemistry', 'democracy', 'ecology', 'fossil', 'genetics', 'history', 'ideology', 'justice', 'kinetic', 'literature', 'mythology', 'navigation', 'optics', 'philosophy', 'quantity', 'radiation', 'sociology', 'technology', 'utopia', 'volcano', 'wildlife', 'xylophone', 'yogurt', 'zephyr', 'antique', 'ballet', 'cinema', 'dialogue', 'emotion', 'fashion', 'gallery', 'harmony', 'illusion', 'jazz', 'knowledge', 'logic', 'melody', 'novel', 'opera', 'poetry', 'quality', 'rhythm', 'sculpture', 'theatre', 'unity', 'virtue', 'wisdom', 'xenolith', 'yoga', 'zenith', 'adventure', 'balance', 'courage', 'destiny', 'eternity', 'freedom', 'glory', 'honor', 'inspiration',
+  'journey', 'karma', 'legacy', 'miracle', 'nature', 'opportunity', 'purpose', 'quest', 'resilience', 'serenity',
+  'transcend', 'unify', 'victory', 'wonder', 'xenon', 'yearning', 'zenith', 'abundance', 'bliss', 'compassion',
+  'diversity', 'empathy', 'fortitude', 'gratitude', 'happiness', 'integrity', 'joyful', 'kindness', 'love', 'mindfulness',
+  'nurture', 'optimism', 'peace', 'quality', 'respect', 'sympathy', 'trust', 'understanding', 'valor', 'wisdom',
+  'xenial', 'youth', 'zeal', 'artistic', 'brilliant', 'creative', 'dynamic', 'enthusiastic', 'fearless', 'generous',
+  'humble', 'innovative', 'jovial', 'keen', 'luminous', 'motivated', 'notable', 'original', 'passionate', 'quick-witted',
+  'resourceful', 'sincere', 'thoughtful', 'uplifting', 'vibrant', 'witty', 'xenodochial', 'youthful', 'zealous', 'ambition',
+  'bravery', 'confidence', 'dedication', 'effort', 'focus', 'growth', 'hope', 'imagination', 'justice', 'knowledge',
+  'leadership', 'motivation', 'novelty', 'optimism', 'perseverance', 'quality', 'responsibility', 'success', 'tenacity', 'unity',
+  'vision', 'wealth', 'excellence', 'youthfulness', 'zealotry', 'astronomy', 'biology', 'chemistry', 'dynamics', 'ecology',
+  'physics', 'geology', 'hydrology', 'immunology', 'jurisprudence', 'kinesiology', 'linguistics', 'meteorology', 'neuroscience', 'oceanography',
+  'paleontology', 'quantum', 'robotics', 'statistics', 'technology', 'urbanism', 'virology', 'waveform', 'xenobiology', 'zoology',
+  'algorithm', 'byte', 'code', 'debug', 'encrypt', 'function', 'graphics', 'hardware', 'interface', 'java',
+  'kernel', 'logic', 'memory', 'network', 'object', 'protocol', 'query', 'runtime', 'syntax', 'thread',
+  'update', 'variable', 'web', 'xml', 'yottabyte', 'zip', 'array', 'boolean', 'class', 'database',
+  'exception', 'framework', 'generic', 'hash', 'inheritance', 'json', 'keyword', 'library', 'method', 'node',
+  'operator', 'package', 'queue', 'recursion', 'stack', 'token', 'unicode', 'virtual', 'while', 'xhtml',
+  'yaml', 'zero', 'acceleration', 'battery', 'circuit', 'diode', 'energy', 'frequency', 'generator', 'hertz',
+  'inductor', 'joule', 'kilowatt', 'laser', 'magnet', 'nanotechnology', 'ohm', 'power', 'quantum', 'resistor',
+  'semiconductor', 'transistor', 'ultraviolet', 'voltage', 'watt', 'x-ray', 'yield', 'zeolite', 'antibody', 'bacteria',
+  'cell', 'dna', 'enzyme', 'fungi', 'genome', 'hormone', 'immune', 'joints', 'kidney', 'ligament',
+  'mitochondria', 'neuron', 'organ', 'protein', 'quarantine', 'receptor', 'synapse', 'tissue', 'urine', 'vaccine',
+  'white blood cell', 'xenograft', 'yeast', 'zygote', 'astronaut', 'black hole', 'cosmos', 'dark matter', 'eclipse', 'full moon',
+  'galaxy', 'hubble', 'interstellar', 'jupiter', 'kuiper belt', 'lunar', 'meteor', 'nebula', 'orbit', 'planet',
+  'quasar', 'rocket', 'satellite', 'telescope', 'universe', 'venus', 'wormhole', 'x-ray star', 'yellow dwarf', 'zenith',
+  'algorithm', 'binary', 'compiler', 'data', 'encryption', 'firewall', 'gigabyte', 'hardware', 'internet', 'keyboard',
+  'linux', 'malware', 'network', 'operating system', 'program', 'quantum computing', 'router', 'server', 'trojan', 'user interface',
+  'virus', 'wifi', 'xml', 'youtube', 'zip file', 'art', 'brush', 'canvas', 'design', 'easel',
+  'frame', 'gallery', 'hue', 'illustration', 'jewel', 'knitting', 'landscape', 'mosaic', 'nature', 'oil painting',
+  'portrait', 'quilt', 'renaissance', 'sculpture', 'texture', 'urban', 'vivid', 'watercolor', 'xilography', 'yarn',
+  'zither', 'adventure', 'backpack', 'camping', 'destination', 'explore', 'flight', 'guide', 'hiking', 'island',
+  'journey', 'kayak', 'luggage', 'map', 'navigation', 'outdoor', 'passport', 'quest', 'road trip', 'sightseeing',
+  'tourism', 'unpack', 'voyage', 'wanderlust', 'xenophile', 'yacht', 'zen', 'architecture', 'building', 'construction',
+  'design', 'engineering', 'foundation', 'geometry', 'high-rise', 'infrastructure', 'junction', 'keystone', 'landmark', 'materials',
+  'neoclassical', 'ornament', 'plan', 'quoin', 'renovation', 'structure', 'tower', 'urban', 'vault', 'window',
+  'xystus', 'yard', 'zone', 'algorithm', 'blockchain', 'cryptocurrency', 'digital', 'encryption', 'finance', 'hash',
+  'investment', 'javascript', 'keypair', 'ledger', 'mining', 'node', 'operation', 'protocol', 'quorum', 'reward',
+  'signature', 'transaction', 'utility', 'validator', 'wallet', 'x-coordinate', 'yield farming', 'zero-knowledge proof', 'act', 'bill',
+  'constitution', 'democracy', 'election', 'freedom', 'government', 'human rights', 'justice', 'law', 'majority', 'nation',
+  'official', 'policy', 'quality', 'representation', 'senate', 'treaty', 'unity', 'voting', 'welfare', 'xenocracy',
+  'youth', 'zealot', 'analysis', 'benchmark', 'calculate', 'data', 'equation', 'function', 'graph', 'hypothesis',
+  'integration', 'joint', 'knot', 'limit', 'matrix', 'number', 'optimization', 'probability', 'quantify', 'regression',
+  'statistics', 'theorem', 'unknown', 'variable', 'weighted', 'x-intercept', 'yield', 'zero', 'atom', 'bond',
+  'chemical', 'density', 'element', 'formula', 'gas', 'hydrogen', 'ion', 'joule', 'kinetic', 'liquid',
+  'molecule', 'neutron', 'oxide', 'particle', 'quantum', 'reaction', 'solution', 'temperature', 'uranium', 'vapor',
+  'wavelength', 'xenon', 'yield', 'zinc', 'algorithm', 'bandwidth', 'cache', 'data', 'encryption', 'firewall',
+  'gateway', 'host', 'internet', 'jitter', 'keyboard', 'latency', 'modem', 'network', 'optics', 'packet',
+  'queue', 'router', 'switch', 'throughput', 'upload', 'virtual', 'wifi', 'xterm', 'yield', 'zone',
+  'application', 'browser', 'code', 'download', 'email', 'file', 'graphic', 'hyperlink', 'interface', 'java',
+  'keyboard', 'link', 'media', 'network', 'online', 'protocol', 'query', 'resource', 'server', 'text',
+  'upload', 'video', 'web', 'xml', 'yahoo', 'zip', 'algorithm', 'binary', 'code', 'debug',
+  'execute', 'function', 'git', 'html', 'integrate', 'java', 'keyword', 'loop', 'method', 'node',
+  'object', 'parameter', 'queue', 'runtime', 'syntax', 'thread', 'utility', 'variable', 'while', 'xml',
+  'yield', 'zip', 'array', 'boolean', 'class', 'double', 'exception', 'float', 'generic', 'hash',
+  'integer', 'json', 'keyword', 'library', 'module', 'null', 'operator', 'package', 'queue', 'record',
+  'string', 'tuple', 'unicode', 'value', 'while', 'xml', 'yield', 'zero', 'algorithm', 'binary',
+  'compiler', 'data', 'exception', 'function', 'garbage', 'heap', 'interface', 'jit', 'keyword', 'linker',
+  'memory', 'namespace', 'object', 'pointer', 'query', 'register', 'stack', 'template', 'unicode', 'variable',
+  'word', 'xml', 'yield', 'zero', 'android', 'buffer', 'cookie', 'debug', 'event', 'framework',
+  'garbage collection', 'heap', 'inheritance', 'javascript', 'kernel', 'linux', 'middleware', 'network', 'object', 'protocol',
+  'queue', 'resource', 'server', 'thread', 'unix', 'virtualization', 'web', 'xml', 'yaml', 'zero-day',
+  'array', 'bytecode', 'class', 'dynamic', 'exception', 'framework', 'generic', 'hierarchy', 'interface', 'jar',
+  'keyword', 'library', 'module', 'namespace', 'object', 'protocol', 'query', 'runtime', 'syntax', 'template',
+  'update', 'version', 'widget', 'xml', 'yaml', 'zip', 'analytics', 'big data', 'cloud', 'data',
+  'engineer', 'forecast', 'growth', 'hadoop', 'insight', 'java', 'kpi', 'log', 'machine learning', 'nosql',
+  'optimization', 'predict', 'query', 'report', 'storage', 'transform', 'user', 'visualization', 'warehouse', 'xml', 'yottabyte', 'zettabyte', 'algorithm', 'blockchain', 'cryptography', 'decentralized', 'encryption', 'fork', 'governance', 'hashrate', 'immutable', 'javascript', 'key', 'ledger', 'mining', 'node', 'oracle', 'protocol', 'quorum', 'reward', 'smart contract', 'token', 'utility', 'validator', 'wallet', 'x-axis', 'yield', 'zero-knowledge',];
+                const selectedWords = [];
+                while (selectedWords.length < count) {
+                    const randomWord = wordsList[Math.floor(Math.random() * wordsList.length)];
+                    if (selectedWords.length === 0 || !areRelated(selectedWords[selectedWords.length - 1], randomWord)) {
+                        selectedWords.push(randomWord);
+                    }
+                }
+                chars.push(...selectedWords);
+            } else {
+                for (let i = 0; i < count; i++) {
+                    if (gameMode === 'number') {
+                        chars.push(randomInt(0, 9));
+                    } else if (gameMode === 'mother') {
+                        chars.push(randomAlphaNumeric());
+                    }
                 }
             }
             return chars;
         }
+
+        function areRelated(word1, word2) {
+            // Define your logic to determine if two words are related
+            // For example, you can consider words related if they start with the same letter
+            return word1.charAt(0).toLowerCase() === word2.charAt(0).toLowerCase();
+        }
+
 
         function randomAlphaNumeric() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -776,34 +900,40 @@
         function arraysEqual(a1, a2) {
             if (a1.length !== a2.length) return false;
             for (let i = 0; i < a1.length; i++) {
-                if (gameMode === 'number') {
+                if (gameMode === 'number' || gameMode === 'mother') {
                     if (a1[i] !== a2[i]) return false;
-                } else if (gameMode === 'mother') {
-                    if (a1[i] !== a2[i]) return false; // Case-sensitive comparison
+                } else if (gameMode === 'words') {
+                    if (a1[i].toLowerCase() !== a2[i].toLowerCase()) return false;
                 }
             }
             return true;
         }
 
         function formatGuess(guessArray) {
-            if (gameMode === 'number') {
-                return guessArray.join(' ');
-            } else if (gameMode === 'mother') {
-                return guessArray.join(' ');
-            }
             return guessArray.join(' ');
         }
 
         function getDynamicMessage(type, livesLeft) {
             const messages = {
-                promptCount: gameMode === 'number' ? 'How many numbers do you want to memorize?' : 'How many characters do you want to memorize?',
-                memorize: gameMode === 'number' ? 'Memorize these numbers:' : 'Memorize these characters:',
-                surpriseRound: gameMode === 'number' ? 'Surprise Round! Memorize these numbers:' : 'Surprise Round! Memorize these characters:',
-                enterCharacters: gameMode === 'number' ? 'Enter the numbers:' : 'Enter the characters:',
+                promptCount: 
+                    gameMode === 'number' ? 'How many numbers do you want to memorize?' :
+                    gameMode === 'mother' ? 'How many characters do you want to memorize?' :
+                    'How many words do you want to memorize?',
+                memorize: 
+                    gameMode === 'number' ? 'Memorize these numbers:' :
+                    gameMode === 'mother' ? 'Memorize these characters:' :
+                    'Memorize these words:',
+                surpriseRound: 
+                    gameMode === 'number' ? 'Surprise Round! Memorize these numbers:' :
+                    gameMode === 'mother' ? 'Surprise Round! Memorize these characters:' :
+                    'Surprise Round! Memorize these words:',
+                enterCharacters: 
+                    gameMode === 'number' ? 'Enter the numbers:' :
+                    gameMode === 'mother' ? 'Enter the characters:' :
+                    'Enter the words:',
                 correct: 'Correct! You win this round!',
-                wrong: (livesLeft) => gameMode === 'number' ? `Wrong! ${livesLeft} ${livesLeft === 1 ? 'life' : 'lives'} left.` : `Wrong! ${livesLeft} ${livesLeft === 1 ? 'life' : 'lives'} left.`,
+                wrong: (livesLeft) => `Wrong! ${livesLeft} ${livesLeft === 1 ? 'life' : 'lives'} left.`,
                 wrongNoLives: 'Wrong! No lives left.',
-                currentMode: gameMode === 'number' ? 'Number Mode Active.' : 'Mother Mode Active.',
                 selectMode: 'Select a mode and start the game!'
             };
 
@@ -816,17 +946,13 @@
 
         function getDynamicPlaceholder(type) {
             const placeholders = {
-                promptCount: 'Enter a positive number',
-                input: gameMode === 'number' ? 'Enter numbers here' : 'Enter characters here'
+                input: 
+                    gameMode === 'number' ? 'Enter numbers here' :
+                    gameMode === 'mother' ? 'Enter characters here' :
+                    'Enter words here (separate with spaces)'
             };
-
             return placeholders[type] || 'Enter input here';
         }
-
-        // Initial Setup: Disable Start button until a mode is selected
-        window.onload = () => {
-            enableStartButton();
-        };
     </script>
 </body>
 </html>
