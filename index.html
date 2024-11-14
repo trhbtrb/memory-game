@@ -784,79 +784,103 @@
             const chars = [];
             if (gameMode === 'words') {
                 // Add your own words generation logic here
-                const wordsList = [
-  'apple', 'banana', 'cherry', 'dog', 'elephant', 'flower', 'guitar', 'house', 'island', 'jacket',
-  'kangaroo', 'lion', 'mountain', 'notebook', 'ocean', 'piano', 'queen', 'rainbow', 'sunflower', 'tree',
-  'umbrella', 'violin', 'whale', 'xylophone', 'yacht', 'zebra', 'airplane', 'boat', 'camera', 'dolphin',
-  'engine', 'forest', 'garden', 'helicopter', 'iceberg', 'jungle', 'koala', 'lemon', 'microphone', 'nest',
-  'orchestra', 'pumpkin', 'quartz', 'rocket', 'saxophone', 'telescope', 'universe', 'volcano', 'waterfall', 'xerox',
-  'yogurt', 'zeppelin', 'anchor', 'bridge', 'castle', 'desert', 'eagle', 'fountain', 'galaxy', 'horizon',
-  'igloo', 'jewel', 'kite', 'lighthouse', 'mirror', 'nebula', 'oasis', 'palace', 'quill', 'river',
-  'statue', 'temple', 'valley', 'windmill', 'x-ray', 'yarn', 'zenith', 'asteroid', 'beach', 'canyon',
-  'dinosaur', 'eclipse', 'feather', 'glacier', 'harbor', 'insect', 'kingdom', 'lagoon', 'meadow',
-  'orchid', 'paradise', 'quarry', 'reef', 'savannah', 'tundra', 'unicorn', 'vortex', 'algebra', 'bicycle',
-  'compass', 'drama', 'equator', 'festival', 'gravity', 'internet', 'kilogram', 'language', 'meteor',
-  'neutron', 'oxygen', 'planet', 'quantum', 'robot', 'satellite', 'tornado', 'voltage', 'weather', 'yesterday',
-  'zodiac', 'alchemy', 'biology', 'chemistry', 'democracy', 'ecology', 'fossil', 'genetics', 'history',
-  'ideology', 'justice', 'kinetic', 'literature', 'mythology', 'navigation', 'optics', 'philosophy', 'quantity',
-  'radiation', 'sociology', 'technology', 'utopia', 'wildlife', 'antique', 'ballet', 'cinema', 'dialogue',
-  'emotion', 'fashion', 'gallery', 'harmony', 'illusion', 'jazz', 'knowledge', 'logic', 'melody', 'novel',
-  'opera', 'poetry', 'quality', 'rhythm', 'sculpture', 'theatre', 'unity', 'virtue', 'wisdom', 'yoga',
-  'adventure', 'balance', 'courage', 'destiny', 'eternity', 'freedom', 'glory', 'honor', 'inspiration',
-  'journey', 'karma', 'legacy', 'miracle', 'nature', 'opportunity', 'purpose', 'quest', 'resilience', 'serenity',
-  'transcend', 'unify', 'victory', 'wonder', 'abundance', 'bliss', 'compassion', 'diversity', 'empathy',
-  'fortitude', 'gratitude', 'happiness', 'integrity', 'joyful', 'kindness', 'love', 'mindfulness', 'nurture',
-  'optimism', 'peace', 'respect', 'sympathy', 'trust', 'understanding', 'valor', 'wisdom', 'youth', 'zeal',
-  'artistic', 'brilliant', 'creative', 'dynamic', 'enthusiastic', 'fearless', 'generous', 'humble', 'innovative',
-  'jovial', 'keen', 'luminous', 'motivated', 'notable', 'original', 'passionate', 'quick-witted', 'resourceful',
-  'sincere', 'thoughtful', 'uplifting', 'vibrant', 'witty', 'youthful', 'zealous', 'ambition', 'bravery',
-  'confidence', 'dedication', 'effort', 'focus', 'growth', 'hope', 'imagination', 'leadership', 'motivation',
-  'novelty', 'perseverance', 'responsibility', 'success', 'tenacity', 'unity', 'vision', 'wealth', 'excellence',
-  'youthfulness', 'astronomy', 'physics', 'geology', 'hydrology', 'immunology', 'linguistics', 'meteorology',
-  'neuroscience', 'oceanography', 'paleontology', 'robotics', 'statistics', 'urbanism', 'virology', 'zoology',
-  'algorithm', 'byte', 'code', 'debug', 'encrypt', 'function', 'graphics', 'hardware', 'interface', 'java',
-  'kernel', 'memory', 'network', 'object', 'protocol', 'query', 'runtime', 'syntax', 'thread', 'update',
-  'variable', 'web', 'xml', 'yottabyte', 'zip', 'array', 'boolean', 'class', 'database', 'exception',
-  'framework', 'generic', 'hash', 'inheritance', 'json', 'keyword', 'library', 'method', 'node', 'operator',
-  'package', 'queue', 'recursion', 'stack', 'token', 'unicode', 'virtual', 'while', 'xhtml', 'yaml',
-  'zero', 'acceleration', 'battery', 'circuit', 'diode', 'energy', 'frequency', 'generator', 'hertz',
-  'inductor', 'joule', 'kilowatt', 'laser', 'magnet', 'nanotechnology', 'ohm', 'power', 'resistor',
-  'semiconductor', 'transistor', 'ultraviolet', 'voltage', 'watt', 'x-ray', 'yield', 'zeolite',
-  'antibody', 'bacteria', 'cell', 'dna', 'enzyme', 'fungi', 'genome', 'hormone', 'immune', 'joints',
-  'kidney', 'ligament', 'mitochondria', 'neuron', 'organ', 'protein', 'quarantine', 'receptor',
-  'synapse', 'tissue', 'urine', 'vaccine', 'white blood cell', 'yeast', 'zygote', 'astronaut',
-  'black hole', 'cosmos', 'dark matter', 'full moon', 'galaxy', 'hubble', 'interstellar', 'jupiter',
-  'lunar', 'orbit', 'planet', 'quasar', 'rocket', 'satellite', 'telescope', 'universe', 'venus',
-  'wormhole', 'yellow dwarf', 'algorithm', 'binary', 'compiler', 'data', 'encryption', 'firewall',
-  'gigabyte', 'hardware', 'internet', 'keyboard', 'linux', 'malware', 'network', 'operating system',
-  'program', 'quantum computing', 'router', 'server', 'trojan', 'user interface', 'virus', 'wifi',
-  'xml', 'youtube', 'zip file', 'art', 'brush', 'canvas', 'design', 'easel', 'frame', 'gallery',
-  'hue', 'illustration', 'jewel', 'knitting', 'landscape', 'mosaic', 'nature', 'oil painting',
-  'portrait', 'quilt', 'renaissance', 'sculpture', 'texture', 'urban', 'vivid', 'watercolor',
-  'yarn', 'zither', 'adventure', 'backpack', 'camping', 'destination', 'explore', 'flight', 'guide',
-  'hiking', 'island', 'journey', 'kayak', 'luggage', 'map', 'navigation', 'outdoor', 'passport',
-  'quest', 'road trip', 'sightseeing', 'tourism', 'unpack', 'voyage', 'wanderlust', 'yacht',
-  'architecture', 'building', 'construction', 'engineering', 'foundation', 'geometry', 'high-rise',
-  'infrastructure', 'junction', 'keystone', 'landmark', 'materials', 'ornament', 'plan', 'quoin',
-  'renovation', 'structure', 'tower', 'vault', 'window', 'yard', 'zone', 'blockchain', 'cryptocurrency',
-  'digital', 'finance', 'investment', 'javascript', 'ledger', 'mining', 'oracle', 'quorum', 'reward',
-  'signature', 'transaction', 'utility', 'validator', 'wallet', 'yield farming', 'act', 'bill',
-  'constitution', 'democracy', 'election', 'freedom', 'government', 'human rights', 'justice', 'law',
-  'majority', 'nation', 'official', 'policy', 'representation', 'senate', 'treaty', 'unity',
-  'voting', 'welfare', 'youth', 'zealot', 'analysis', 'benchmark', 'calculate', 'equation',
-  'graph', 'hypothesis', 'integration', 'joint', 'knot', 'limit', 'matrix', 'number',
-  'optimization', 'probability', 'quantify', 'regression', 'statistics', 'theorem', 'unknown',
-  'variable', 'weighted', 'x-intercept', 'atom', 'bond', 'chemical', 'density', 'element',
-  'formula', 'gas', 'hydrogen', 'ion', 'joule', 'kinetic', 'liquid', 'molecule', 'neutron',
-  'oxide', 'particle', 'reaction', 'solution', 'temperature', 'uranium', 'vapor', 'wavelength',
-  'xenon', 'zinc', 'bandwidth', 'gateway', 'host', 'jitter', 'latency', 'modem', 'optics',
-  'packet', 'switch', 'throughput', 'upload', 'xterm', 'application', 'browser', 'download',
-  'email', 'file', 'graphic', 'hyperlink', 'link', 'media', 'online', 'report', 'storage',
-  'transform', 'visualization', 'warehouse', 'yottabyte', 'zettabyte', 'decentralized', 'fork',
-  'governance', 'hashrate', 'immutable', 'key', 'oracle', 'quorum', 'smart contract', 'token',
-  'zero-knowledge',
-  // Add more words here to reach 1,500
+              const wordsList = [ 
+                  // **Animals**
+  // *Mammals*
+  'lion', 'tiger', 'elephant', 'giraffe', 'kangaroo', 'zebra', 'monkey',
+  'bear', 'wolf', 'fox', 'deer', 'panda', 'koala', 'squirrel', 'bat',
+  
+  // *Birds*
+  'eagle', 'parrot', 'penguin', 'sparrow', 'owl', 'falcon', 'hawk',
+  'pigeon', 'crow', 'seagull',
+  
+  // **Fruits**
+  'apple', 'banana', 'cherry', 'mango', 'pineapple', 'orange',
+  'strawberry', 'blueberry', 'raspberry', 'grapes', 'watermelon',
+  'lemon', 'lime', 'peach', 'pear', 'plum',
+  
+  // **Vegetables**
+  'carrot', 'broccoli', 'spinach', 'potato', 'tomato', 'lettuce',
+  'cucumber', 'bell pepper', 'onion', 'garlic', 'zucchini', 'eggplant',
+  'cauliflower', 'kale', 'cabbage', 'peas', 'green beans', 'asparagus',
+  
+  // **Household Items**
+  // *Kitchen Items*
+  'refrigerator', 'stove', 'microwave', 'toaster', 'blender',
+  'dishwasher', 'coffee maker', 'kettle', 'oven', 'freezer',
+  'toaster oven', 'rice cooker', 'slow cooker', 'air fryer',
+  'electric grill', 'food processor', 'juicer', 'mixer',
+  'cutting board', 'knife set', 'measuring cups', 'measuring spoons',
+  'mixing bowls', 'strainer', 'grater', 'peeler', 'spatula',
+  'whisk',
+  
+  // *Living Room Items*
+  'sofa', 'coffee table', 'television', 'lamp', 'bookshelf',
+  'armchair', 'recliner', 'ottoman', 'rug', 'curtains',
+  'blinds', 'artwork', 'picture frame', 'mirror', 'candle',
+  'vase', 'plant', 'remote control', 'speaker', 'fan',
+  
+  // **Technology**
+  // *Computers and Accessories*
+  'laptop', 'desktop', 'mouse', 'keyboard', 'monitor',
+  'printer', 'scanner', 'external hard drive', 'usb flash drive',
+  'webcam', 'microphone', 'headset', 'speakers', 'router',
+  'modem', 'graphics card', 'motherboard', 'power supply',
+  'computer case', 'SSD', 'HDD', 'RAM', 'graphics tablet',
+  
+  // *Mobile Devices*
+  'smartphone', 'tablet', 'smartwatch', 'e-reader',
+  'portable charger', 'power bank', 'smartphone case',
+  'screen protector', 'tablet stand', 'stylus', 'wireless earbuds',
+  'bluetooth headphones', 'portable speaker', 'fitness tracker',
+  'VR headset', 'action camera', 'drone controller',
+  'mobile router', 'SIM card', 'microSD card', 'phone mount',
+  'car charger', 'wireless charger', 'charging cable',
+  
+  // **Gadgets**
+  'drone', 'VR headset', 'fitness tracker', 'bluetooth speaker',
+  'digital camera', 'smart light bulb', 'smart plug',
+  'smart thermostat', 'smart lock', 'smart doorbell',
+  'smart security camera', 'smart display', 'smart remote',
+  'smart glasses', 'smart speaker', 'smart vacuum',
+  'smart air purifier', 'smart coffee maker', 'smart kettle',
+  
+  // **Clothing and Accessories**
+  // *Clothing Items*
+  't-shirt', 'jeans', 'jacket', 'dress', 'shorts', 'skirt',
+  'sweater', 'coat', 'blouse', 'shirt', 'tank top', 'sweatshirt',
+  'hoodie', 'vest', 'blazer', 'leggings', 'sneakers',
+  'boots', 'sandals', 'heels', 'flats',
+  
+  // *Accessories*
+  'hat', 'scarf', 'belt', 'sunglasses', 'watch', 'bracelet',
+  'necklace', 'earrings', 'rings', 'handbag', 'backpack',
+  'wallet', 'purse', 'gloves', 'mittens', 'hairband',
+  'headband', 'tie', 'bow tie',
+  
+  // **Office Supplies**
+  'notebook', 'pen', 'stapler', 'printer', 'paper clips',
+  'pencil', 'eraser', 'marker', 'highlighter', 'binder',
+  'folder', 'sticky notes', 'scissors', 'tape', 'ruler',
+  'calculator', 'push pins', 'file cabinet', 'envelope',
+  'letter opener', 'whiteboard', 'dry erase markers',
+  'desk organizer', 'file folders', 'desk lamp', 'office chair',
+  'desk', 'computer desk', 'shredder', 'trash can',
+  
+  // **Food & Beverages**
+  'pizza', 'hamburger', 'sushi', 'pasta', 'salad', 'steak',
+  'taco', 'sandwich', 'soup', 'ice cream', 'cake',
+  'brownie', 'donut', 'pancake', 'waffle', 'bagel',
+  'croissant', 'cheese', 'bread', 'butter', 'jam',
+  'honey', 'cereal', 'oatmeal', 'yogurt', 'milkshake',
+  'coffee', 'tea', 'juice', 'soda', 'water', 'wine',
+  'beer',
+  
+  // **Music**
+  'guitar', 'piano', 'violin', 'drums', 'flute', 'saxophone',
+  'trumpet', 'cello', 'clarinet', 'banjo', 'trombone', 'ukulele',
 ];
+
 
 
                 const selectedWords = [];
