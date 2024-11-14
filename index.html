@@ -675,9 +675,11 @@
         function checkGuess(playerGuess) {
             const correctCount = numbers.reduce((count, item, index) => {
                 if (gameMode === 'number' || gameMode === 'mother') {
-                    return char === playerGuess[index] ? count + 1 : count;
-                }else if (gameMode === 'words') {
-                        return item.toLowerCase() === playerGuess[index].toLowerCase() ? count + 1 : count;
+                    return item === playerGuess[index] ? count + 1 : count;
+                } else if (gameMode === 'words') {
+                    const processedItem = item.replace(/-/g, ' ').toLowerCase();
+                    const processedGuess = playerGuess[index].replace(/-/g, ' ').toLowerCase();
+                    return processedItem === processedGuess ? count + 1 : count;
                 }
                 return count;
             }, 0);
@@ -708,6 +710,7 @@
                 }
             }
         }
+
 
         function handleSurpriseRound(correctCount) {
             const probability = correctCount === 0 ? 0 : Math.pow(correctCount / numberCount, 2);
@@ -785,101 +788,102 @@
             if (gameMode === 'words') {
                 // Add your own words generation logic here
               const wordsList = [ 
-                  // **Animals**
-  // *Mammals*
-  'lion', 'tiger', 'elephant', 'giraffe', 'kangaroo', 'zebra', 'monkey',
-  'bear', 'wolf', 'fox', 'deer', 'panda', 'koala', 'squirrel', 'bat',
-  
-  // *Birds*
-  'eagle', 'parrot', 'penguin', 'sparrow', 'owl', 'falcon', 'hawk',
-  'pigeon', 'crow', 'seagull',
-  
-  // **Fruits**
-  'apple', 'banana', 'cherry', 'mango', 'pineapple', 'orange',
-  'strawberry', 'blueberry', 'raspberry', 'grapes', 'watermelon',
-  'lemon', 'lime', 'peach', 'pear', 'plum',
-  
-  // **Vegetables**
-  'carrot', 'broccoli', 'spinach', 'potato', 'tomato', 'lettuce',
-  'cucumber', 'bell-pepper', 'onion', 'garlic', 'zucchini', 'eggplant',
-  'cauliflower', 'kale', 'cabbage', 'peas', 'green-beans', 'asparagus',
-  
-  // **Household Items**
-  // *Kitchen Items*
-  'refrigerator', 'stove', 'microwave', 'toaster', 'blender',
-  'dishwasher', 'coffee-maker', 'kettle', 'oven', 'freezer',
-  'toaster-oven', 'rice-cooker', 'slow-cooker', 'air-fryer',
-  'electric-grill', 'food-processor', 'juicer', 'mixer',
-  'cutting-board', 'knife-set', 'measuring-cups', 'measuring-spoons',
-  'mixing-bowls', 'strainer', 'grater', 'peeler', 'spatula',
-  'whisk',
-  
-  // *Living Room Items*
-  'sofa', 'coffee-table', 'television', 'lamp', 'bookshelf',
-  'armchair', 'recliner', 'ottoman', 'rug', 'curtains',
-  'blinds', 'artwork', 'picture-frame', 'mirror', 'candle',
-  'vase', 'plant', 'remote-control', 'speaker', 'fan',
-  
-  // **Technology**
-  // *Computers and Accessories*
-  'laptop', 'desktop', 'mouse', 'keyboard', 'monitor',
-  'printer', 'scanner', 'external-hard-drive', 'usb-flash-drive',
-  'webcam', 'microphone', 'headset', 'speakers', 'router',
-  'modem', 'graphics-card', 'motherboard', 'power-supply',
-  'computer-case', 'SSD', 'HDD', 'RAM', 'graphics-tablet',
-  
-  // *Mobile Devices*
-  'smartphone', 'tablet', 'smartwatch', 'e-reader',
-  'portable-charger', 'power-bank', 'smartphone-case',
-  'screen-protector', 'tablet-stand', 'stylus', 'wireless-earbuds',
-  'bluetooth-headphones', 'portable-speaker', 'fitness-tracker',
-  'VR-headset', 'action-camera', 'drone-controller',
-  'mobile-router', 'SIM-card', 'microSD-card', 'phone-mount',
-  'car-charger', 'wireless-charger', 'charging-cable',
-  
-  // **Gadgets**
-  'drone', 'VR-headset', 'fitness-tracker', 'bluetooth-speaker',
-  'digital-camera', 'smart-light-bulb', 'smart-plug',
-  'smart-thermostat', 'smart-lock', 'smart-doorbell',
-  'smart-security-camera', 'smart-display', 'smart-remote',
-  'smart-glasses', 'smart-speaker', 'smart-vacuum',
-  'smart-air-purifier', 'smart-coffee-maker', 'smart-kettle',
-  
-  // **Clothing and Accessories**
-  // *Clothing Items*
-  't-shirt', 'jeans', 'jacket', 'dress', 'shorts', 'skirt',
-  'sweater', 'coat', 'blouse', 'shirt', 'tank-top', 'sweatshirt',
-  'hoodie', 'vest', 'blazer', 'leggings', 'sneakers',
-  'boots', 'sandals', 'heels', 'flats',
-  
-  // *Accessories*
-  'hat', 'scarf', 'belt', 'sunglasses', 'watch', 'bracelet',
-  'necklace', 'earrings', 'rings', 'handbag', 'backpack',
-  'wallet', 'purse', 'gloves', 'mittens', 'hairband',
-  'headband', 'tie', 'bow-tie',
-  
-  // **Office Supplies**
-  'notebook', 'pen', 'stapler', 'printer', 'paper-clips',
-  'pencil', 'eraser', 'marker', 'highlighter', 'binder',
-  'folder', 'sticky-notes', 'scissors', 'tape', 'ruler',
-  'calculator', 'push-pins', 'file-cabinet', 'envelope',
-  'letter-opener', 'whiteboard', 'dry-erase-markers',
-  'desk-organizer', 'file-folders', 'desk-lamp', 'office-chair',
-  'desk', 'computer-desk', 'shredder', 'trash-can',
-  
-  // **Food & Beverages**
-  'pizza', 'hamburger', 'sushi', 'pasta', 'salad', 'steak',
-  'taco', 'sandwich', 'soup', 'ice-cream', 'cake',
-  'brownie', 'donut', 'pancake', 'waffle', 'bagel',
-  'croissant', 'cheese', 'bread', 'butter', 'jam',
-  'honey', 'cereal', 'oatmeal', 'yogurt', 'milkshake',
-  'coffee', 'tea', 'juice', 'soda', 'water', 'wine',
-  'beer',
-  
-  // **Music**
-  'guitar', 'piano', 'violin', 'drums', 'flute', 'saxophone',
-  'trumpet', 'cello', 'clarinet', 'banjo', 'trombone', 'ukulele',
+    // **Animals**
+    // *Mammals*
+    'lion', 'tiger', 'elephant', 'giraffe', 'kangaroo', 'zebra', 'monkey',
+    'bear', 'wolf', 'fox', 'deer', 'panda', 'koala', 'squirrel', 'bat',
+    
+    // *Birds*
+    'eagle', 'parrot', 'penguin', 'sparrow', 'owl', 'falcon', 'hawk',
+    'pigeon', 'crow', 'seagull',
+    
+    // **Fruits**
+    'apple', 'banana', 'cherry', 'mango', 'pineapple', 'orange',
+    'strawberry', 'blueberry', 'raspberry', 'grapes', 'watermelon',
+    'lemon', 'lime', 'peach', 'pear', 'plum',
+    
+    // **Vegetables**
+    'carrot', 'broccoli', 'spinach', 'potato', 'tomato', 'lettuce',
+    'cucumber', 'bellpepper', 'onion', 'garlic', 'zucchini', 'eggplant',
+    'cauliflower', 'kale', 'cabbage', 'peas', 'greenbeans', 'asparagus',
+    
+    // **Household Items**
+    // *Kitchen Items*
+    'refrigerator', 'stove', 'microwave', 'toaster', 'blender',
+    'dishwasher', 'coffeemaker', 'kettle', 'oven', 'freezer',
+    'toasteroven', 'ricecooker', 'slowcooker', 'airfryer',
+    'electricgrill', 'foodprocessor', 'juicer', 'mixer',
+    'cuttingboard', 'knifeset', 'measuringcups', 'measuringspoons',
+    'mixingbowls', 'strainer', 'grater', 'peeler', 'spatula',
+    'whisk',
+    
+    // *Living Room Items*
+    'sofa', 'coffeetable', 'television', 'lamp', 'bookshelf',
+    'armchair', 'recliner', 'ottoman', 'rug', 'curtains',
+    'blinds', 'artwork', 'pictureframe', 'mirror', 'candle',
+    'vase', 'plant', 'remotecontrol', 'speaker', 'fan',
+    
+    // **Technology**
+    // *Computers and Accessories*
+    'laptop', 'desktop', 'mouse', 'keyboard', 'monitor',
+    'printer', 'scanner', 'externalharddrive', 'usbflashdrive',
+    'webcam', 'microphone', 'headset', 'speakers', 'router',
+    'modem', 'graphicscard', 'motherboard', 'powersupply',
+    'computercase', 'SSD', 'HDD', 'RAM', 'graphicstablet',
+    
+    // *Mobile Devices*
+    'smartphone', 'tablet', 'smartwatch', 'ereader',
+    'portablecharger', 'powerbank', 'smartphonecase',
+    'screenprotector', 'tabletstand', 'stylus', 'wirelessearbuds',
+    'bluetoothheadphones', 'portablespeaker', 'fitnesstracker',
+    'VRheadset', 'actioncamera', 'dronecontroller',
+    'mobilerouter', 'SIMcard', 'microSDcard', 'phonemount',
+    'carcharger', 'wirelesscharger', 'chargingcable',
+    
+    // **Gadgets**
+    'drone', 'VRheadset', 'fitnesstracker', 'bluetoothspeaker',
+    'digitalcamera', 'smartlightbulb', 'smartplug',
+    'smartthermostat', 'smartlock', 'smartdoorbell',
+    'smartsecuritycamera', 'smartdisplay', 'smartremote',
+    'smartglasses', 'smartspeaker', 'smartvacuum',
+    'smartairpurifier', 'smartcoffeemaker', 'smartkettle',
+    
+    // **Clothing and Accessories**
+    // *Clothing Items*
+    'tshirt', 'jeans', 'jacket', 'dress', 'shorts', 'skirt',
+    'sweater', 'coat', 'blouse', 'shirt', 'tanktop', 'sweatshirt',
+    'hoodie', 'vest', 'blazer', 'leggings', 'sneakers',
+    'boots', 'sandals', 'heels', 'flats',
+    
+    // *Accessories*
+    'hat', 'scarf', 'belt', 'sunglasses', 'watch', 'bracelet',
+    'necklace', 'earrings', 'rings', 'handbag', 'backpack',
+    'wallet', 'purse', 'gloves', 'mittens', 'hairband',
+    'headband', 'tie', 'bowtie',
+    
+    // **Office Supplies**
+    'notebook', 'pen', 'stapler', 'printer', 'paperclips',
+    'pencil', 'eraser', 'marker', 'highlighter', 'binder',
+    'folder', 'stickynotes', 'scissors', 'tape', 'ruler',
+    'calculator', 'pushpins', 'filecabinet', 'envelope',
+    'letteropener', 'whiteboard', 'dryerasemarkers',
+    'deskorganizer', 'filefolders', 'desklamp', 'officechair',
+    'desk', 'computerdesk', 'shredder', 'trashcan',
+    
+    // **Food & Beverages**
+    'pizza', 'hamburger', 'sushi', 'pasta', 'salad', 'steak',
+    'taco', 'sandwich', 'soup', 'icecream', 'cake',
+    'brownie', 'donut', 'pancake', 'waffle', 'bagel',
+    'croissant', 'cheese', 'bread', 'butter', 'jam',
+    'honey', 'cereal', 'oatmeal', 'yogurt', 'milkshake',
+    'coffee', 'tea', 'juice', 'soda', 'water', 'wine',
+    'beer',
+    
+    // **Music**
+    'guitar', 'piano', 'violin', 'drums', 'flute', 'saxophone',
+    'trumpet', 'cello', 'clarinet', 'banjo', 'trombone', 'ukulele',
 ];
+
 
 
 
@@ -935,11 +939,15 @@
                 if (gameMode === 'number' || gameMode === 'mother') {
                     if (a1[i] !== a2[i]) return false;
                 } else if (gameMode === 'words') {
-                    if (a1[i].toLowerCase() !== a2[i].toLowerCase()) return false;
+                    // Remove hyphens and convert to lowercase for accurate comparison
+                    const processedA1 = a1[i].replace(/-/g, ' ').toLowerCase();
+                    const processedA2 = a2[i].replace(/-/g, ' ').toLowerCase();
+                    if (processedA1 !== processedA2) return false;
                 }
             }
             return true;
         }
+
 
         function formatGuess(guessArray) {
             return guessArray.join(' ');
