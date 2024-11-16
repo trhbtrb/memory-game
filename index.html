@@ -22,6 +22,24 @@
             padding: 0;
         }
 
+        #submit-btn {
+            font-size: 1.125rem;
+            padding: 0.625rem 1.25rem;
+            margin: 0.3125rem auto; /* Centers the button horizontally */
+            border: none;
+            background-color: #1e90ff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: none; /* Hide submit button initially */
+            max-width: 200px; /* Optional: Control the button's maximum width */
+        }
+
+        #submit-btn:hover {
+            background-color: #00bfff;
+        }
+
         .game-container {
             text-align: center;
             padding: 50px;
@@ -252,6 +270,13 @@
                 padding: 0.5rem; /* 8px */
             }
 
+            #submit-btn {
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+                margin: 0.25rem auto; /* Center the button */
+                max-width: 150px; /* Adjust max-width for smaller screens */
+            }
+
             #difficulty-description {
                 font-size: 0.9rem;
             }
@@ -316,6 +341,13 @@
                 padding: 0.4rem; /* 6.4px */
             }
 
+            #submit-btn {
+                font-size: 0.875rem;
+                padding: 0.4rem 0.8rem;
+                margin: 0.2rem auto; /* Center the button */
+                max-width: 120px; /* Adjust max-width for very small screens */
+            }
+
             #difficulty-description {
                 font-size: 0.8rem;
             }
@@ -362,6 +394,8 @@
             <p id="numbers"></p>
             <!-- Input field for player guesses -->
             <input type="text" id="player-input" placeholder="Enter numbers here" maxlength="1000">
+            <!-- Submit Button -->
+            <button id="submit-btn">Submit</button>
             <!-- Buttons -->
             <div id="buttons">
                 <!-- Mode Selection Buttons -->
@@ -423,6 +457,7 @@
         const messageEl = document.getElementById('message');
         const numbersEl = document.getElementById('numbers');
         const playerInputEl = document.getElementById('player-input');
+        const submitBtn = document.getElementById('submit-btn'); // Added Submit Button
         const startBtn = document.getElementById('start-btn');
         const scoreEl = document.getElementById('score');
         const livesEl = document.getElementById('lives');
@@ -450,6 +485,7 @@
                 submitInput();
             }
         });
+        submitBtn.addEventListener('click', submitInput); // Added Submit Button Event Listener
 
         // Functions
         function selectMode(mode, button) {
@@ -569,6 +605,7 @@
             messageEl.textContent = isSurpriseRound ? getDynamicMessage('surpriseRound') : getDynamicMessage('memorize');
             numbersEl.textContent = numbers.join(' ');
             playerInputEl.style.display = 'none';
+            submitBtn.style.display = 'none'; // Ensure submit button is hidden
             timerDisplayEl.textContent = `Time Remaining: ${timeLeft} seconds`;
 
             const timer = setInterval(() => {
@@ -586,6 +623,7 @@
             numbersEl.textContent = '';
             timerDisplayEl.textContent = '';
             playerInputEl.style.display = 'block';
+            submitBtn.style.display = 'block'; // Show submit button
             playerInputEl.value = '';
             playerInputEl.placeholder = getDynamicPlaceholder('input');
             playerInputEl.focus();
@@ -685,6 +723,7 @@
             }, 0);
 
             playerInputEl.style.display = 'none';
+            submitBtn.style.display = 'none'; // Hide submit button
 
             // Display player's input and correct answer
             playerAnswerEl.textContent = `Your Input: ${formatGuess(playerGuess)}`;
@@ -764,6 +803,7 @@
             playerAnswerEl.textContent = '';
             correctAnswerEl.textContent = '';
             playerInputEl.style.display = 'none';
+            submitBtn.style.display = 'none'; // Hide submit button
             startBtn.textContent = 'Play Again';
             startBtn.classList.remove('enabled');
             startBtn.style.backgroundColor = '#1e90ff';
@@ -787,106 +827,102 @@
             const chars = [];
             if (gameMode === 'words') {
                 // Add your own words generation logic here
-              const wordsList = [ 
-    // **Animals**
-    // *Mammals*
-    'lion', 'tiger', 'elephant', 'giraffe', 'kangaroo', 'zebra', 'monkey',
-    'bear', 'wolf', 'fox', 'deer', 'panda', 'koala', 'squirrel', 'bat',
-    
-    // *Birds*
-    'eagle', 'parrot', 'penguin', 'sparrow', 'owl', 'falcon', 'hawk',
-    'pigeon', 'crow', 'seagull',
-    
-    // **Fruits**
-    'apple', 'banana', 'cherry', 'mango', 'pineapple', 'orange',
-    'strawberry', 'blueberry', 'raspberry', 'grapes', 'watermelon',
-    'lemon', 'lime', 'peach', 'pear', 'plum',
-    
-    // **Vegetables**
-    'carrot', 'broccoli', 'spinach', 'potato', 'tomato', 'lettuce',
-    'cucumber', 'bellpepper', 'onion', 'garlic', 'zucchini', 'eggplant',
-    'cauliflower', 'kale', 'cabbage', 'peas', 'greenbeans', 'asparagus',
-    
-    // **Household Items**
-    // *Kitchen Items*
-    'refrigerator', 'stove', 'microwave', 'toaster', 'blender',
-    'dishwasher', 'coffeemaker', 'kettle', 'oven', 'freezer',
-    'toasteroven', 'ricecooker', 'slowcooker', 'airfryer',
-    'electricgrill', 'foodprocessor', 'juicer', 'mixer',
-    'cuttingboard', 'knifeset', 'measuringcups', 'measuringspoons',
-    'mixingbowls', 'strainer', 'grater', 'peeler', 'spatula',
-    'whisk',
-    
-    // *Living Room Items*
-    'sofa', 'coffeetable', 'television', 'lamp', 'bookshelf',
-    'armchair', 'recliner', 'ottoman', 'rug', 'curtains',
-    'blinds', 'artwork', 'pictureframe', 'mirror', 'candle',
-    'vase', 'plant', 'remotecontrol', 'speaker', 'fan',
-    
-    // **Technology**
-    // *Computers and Accessories*
-    'laptop', 'desktop', 'mouse', 'keyboard', 'monitor',
-    'printer', 'scanner', 'externalharddrive', 'usbflashdrive',
-    'webcam', 'microphone', 'headset', 'speakers', 'router',
-    'modem', 'graphicscard', 'motherboard', 'powersupply',
-    'computercase', 'SSD', 'HDD', 'RAM', 'graphicstablet',
-    
-    // *Mobile Devices*
-    'smartphone', 'tablet', 'smartwatch', 'ereader',
-    'portablecharger', 'powerbank', 'smartphonecase',
-    'screenprotector', 'tabletstand', 'stylus', 'wirelessearbuds',
-    'bluetoothheadphones', 'portablespeaker', 'fitnesstracker',
-    'VRheadset', 'actioncamera', 'dronecontroller',
-    'mobilerouter', 'SIMcard', 'microSDcard', 'phonemount',
-    'carcharger', 'wirelesscharger', 'chargingcable',
-    
-    // **Gadgets**
-    'drone', 'VRheadset', 'fitnesstracker', 'bluetoothspeaker',
-    'digitalcamera', 'smartlightbulb', 'smartplug',
-    'smartthermostat', 'smartlock', 'smartdoorbell',
-    'smartsecuritycamera', 'smartdisplay', 'smartremote',
-    'smartglasses', 'smartspeaker', 'smartvacuum',
-    'smartairpurifier', 'smartcoffeemaker', 'smartkettle',
-    
-    // **Clothing and Accessories**
-    // *Clothing Items*
-    'tshirt', 'jeans', 'jacket', 'dress', 'shorts', 'skirt',
-    'sweater', 'coat', 'blouse', 'shirt', 'tanktop', 'sweatshirt',
-    'hoodie', 'vest', 'blazer', 'leggings', 'sneakers',
-    'boots', 'sandals', 'heels', 'flats',
-    
-    // *Accessories*
-    'hat', 'scarf', 'belt', 'sunglasses', 'watch', 'bracelet',
-    'necklace', 'earrings', 'rings', 'handbag', 'backpack',
-    'wallet', 'purse', 'gloves', 'mittens', 'hairband',
-    'headband', 'tie', 'bowtie',
-    
-    // **Office Supplies**
-    'notebook', 'pen', 'stapler', 'printer', 'paperclips',
-    'pencil', 'eraser', 'marker', 'highlighter', 'binder',
-    'folder', 'stickynotes', 'scissors', 'tape', 'ruler',
-    'calculator', 'pushpins', 'filecabinet', 'envelope',
-    'letteropener', 'whiteboard', 'dryerasemarkers',
-    'deskorganizer', 'filefolders', 'desklamp', 'officechair',
-    'desk', 'computerdesk', 'shredder', 'trashcan',
-    
-    // **Food & Beverages**
-    'pizza', 'hamburger', 'sushi', 'pasta', 'salad', 'steak',
-    'taco', 'sandwich', 'soup', 'icecream', 'cake',
-    'brownie', 'donut', 'pancake', 'waffle', 'bagel',
-    'croissant', 'cheese', 'bread', 'butter', 'jam',
-    'honey', 'cereal', 'oatmeal', 'yogurt', 'milkshake',
-    'coffee', 'tea', 'juice', 'soda', 'water', 'wine',
-    'beer',
-    
-    // **Music**
-    'guitar', 'piano', 'violin', 'drums', 'flute', 'saxophone',
-    'trumpet', 'cello', 'clarinet', 'banjo', 'trombone', 'ukulele',
-];
-
-
-
-
+                const wordsList = [ 
+                    // **Animals**
+                    // *Mammals*
+                    'lion', 'tiger', 'elephant', 'giraffe', 'kangaroo', 'zebra', 'monkey',
+                    'bear', 'wolf', 'fox', 'deer', 'panda', 'koala', 'squirrel', 'bat',
+                    
+                    // *Birds*
+                    'eagle', 'parrot', 'penguin', 'sparrow', 'owl', 'falcon', 'hawk',
+                    'pigeon', 'crow', 'seagull',
+                    
+                    // **Fruits**
+                    'apple', 'banana', 'cherry', 'mango', 'pineapple', 'orange',
+                    'strawberry', 'blueberry', 'raspberry', 'grapes', 'watermelon',
+                    'lemon', 'lime', 'peach', 'pear', 'plum',
+                    
+                    // **Vegetables**
+                    'carrot', 'broccoli', 'spinach', 'potato', 'tomato', 'lettuce',
+                    'cucumber', 'bellpepper', 'onion', 'garlic', 'zucchini', 'eggplant',
+                    'cauliflower', 'kale', 'cabbage', 'peas', 'greenbeans', 'asparagus',
+                    
+                    // **Household Items**
+                    // *Kitchen Items*
+                    'refrigerator', 'stove', 'microwave', 'toaster', 'blender',
+                    'dishwasher', 'coffeemaker', 'kettle', 'oven', 'freezer',
+                    'toasteroven', 'ricecooker', 'slowcooker', 'airfryer',
+                    'electricgrill', 'foodprocessor', 'juicer', 'mixer',
+                    'cuttingboard', 'knifeset', 'measuringcups', 'measuringspoons',
+                    'mixingbowls', 'strainer', 'grater', 'peeler', 'spatula',
+                    'whisk',
+                    
+                    // *Living Room Items*
+                    'sofa', 'coffeetable', 'television', 'lamp', 'bookshelf',
+                    'armchair', 'recliner', 'ottoman', 'rug', 'curtains',
+                    'blinds', 'artwork', 'pictureframe', 'mirror', 'candle',
+                    'vase', 'plant', 'remotecontrol', 'speaker', 'fan',
+                    
+                    // **Technology**
+                    // *Computers and Accessories*
+                    'laptop', 'desktop', 'mouse', 'keyboard', 'monitor',
+                    'printer', 'scanner', 'externalharddrive', 'usbflashdrive',
+                    'webcam', 'microphone', 'headset', 'speakers', 'router',
+                    'modem', 'graphicscard', 'motherboard', 'powersupply',
+                    'computercase', 'SSD', 'HDD', 'RAM', 'graphicstablet',
+                    
+                    // *Mobile Devices*
+                    'smartphone', 'tablet', 'smartwatch', 'ereader',
+                    'portablecharger', 'powerbank', 'smartphonecase',
+                    'screenprotector', 'tabletstand', 'stylus', 'wirelessearbuds',
+                    'bluetoothheadphones', 'portablespeaker', 'fitnesstracker',
+                    'VRheadset', 'actioncamera', 'dronecontroller',
+                    'mobilerouter', 'SIMcard', 'microSDcard', 'phonemount',
+                    'carcharger', 'wirelesscharger', 'chargingcable',
+                    
+                    // **Gadgets**
+                    'drone', 'VRheadset', 'fitnesstracker', 'bluetoothspeaker',
+                    'digitalcamera', 'smartlightbulb', 'smartplug',
+                    'smartthermostat', 'smartlock', 'smartdoorbell',
+                    'smartsecuritycamera', 'smartdisplay', 'smartremote',
+                    'smartglasses', 'smartspeaker', 'smartvacuum',
+                    'smartairpurifier', 'smartcoffeemaker', 'smartkettle',
+                    
+                    // **Clothing and Accessories**
+                    // *Clothing Items*
+                    'tshirt', 'jeans', 'jacket', 'dress', 'shorts', 'skirt',
+                    'sweater', 'coat', 'blouse', 'shirt', 'tanktop', 'sweatshirt',
+                    'hoodie', 'vest', 'blazer', 'leggings', 'sneakers',
+                    'boots', 'sandals', 'heels', 'flats',
+                    
+                    // *Accessories*
+                    'hat', 'scarf', 'belt', 'sunglasses', 'watch', 'bracelet',
+                    'necklace', 'earrings', 'rings', 'handbag', 'backpack',
+                    'wallet', 'purse', 'gloves', 'mittens', 'hairband',
+                    'headband', 'tie', 'bowtie',
+                    
+                    // **Office Supplies**
+                    'notebook', 'pen', 'stapler', 'printer', 'paperclips',
+                    'pencil', 'eraser', 'marker', 'highlighter', 'binder',
+                    'folder', 'stickynotes', 'scissors', 'tape', 'ruler',
+                    'calculator', 'pushpins', 'filecabinet', 'envelope',
+                    'letteropener', 'whiteboard', 'dryerasemarkers',
+                    'deskorganizer', 'filefolders', 'desklamp', 'officechair',
+                    'desk', 'computerdesk', 'shredder', 'trashcan',
+                    
+                    // **Food & Beverages**
+                    'pizza', 'hamburger', 'sushi', 'pasta', 'salad', 'steak',
+                    'taco', 'sandwich', 'soup', 'icecream', 'cake',
+                    'brownie', 'donut', 'pancake', 'waffle', 'bagel',
+                    'croissant', 'cheese', 'bread', 'butter', 'jam',
+                    'honey', 'cereal', 'oatmeal', 'yogurt', 'milkshake',
+                    'coffee', 'tea', 'juice', 'soda', 'water', 'wine',
+                    'beer',
+                    
+                    // **Music**
+                    'guitar', 'piano', 'violin', 'drums', 'flute', 'saxophone',
+                    'trumpet', 'cello', 'clarinet', 'banjo', 'trombone', 'ukulele',
+                ];
 
                 const selectedWords = [];
                 while (selectedWords.length < count) {
