@@ -412,47 +412,18 @@
             display: block; /* Ensure it's visible initially */
         }
 
-        .tracker-button {
-            position: relative;
+        .tracker-header {
             display: flex;
+            justify-content: center; /* Center the title horizontally */
             align-items: center;
-            justify-content: center;
-            padding: 10px;
-            background-color: #1e90ff;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            transition: background-color 0.3s;
-            margin: 0 auto 10px;
+            margin-bottom: 10px;
         }
 
-        .tracker-button:hover {
-            background-color: #00bfff;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            margin-top: 10px;
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-            font-size: 0.8rem;
-        }
-
-        .calendar-day.active {
-            background-color: #90EE90;
-            color: white;
+        .tracker-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin: 0;
+            text-align: center;
         }
 
         .streak-counter {
@@ -460,19 +431,6 @@
             margin: 10px 0;
             font-size: 1.2rem;
             color: #333;
-        }
-
-        .tracker-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .tracker-title {
-            font-size: 1.2rem;
-            color: #333;
-            margin: 0;
         }
 
         .month-navigation {
@@ -499,6 +457,28 @@
         .current-month-year {
             font-size: 1rem;
             color: #333;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+
+        .calendar-day.active {
+            background-color: #90EE90;
+            color: white;
         }
 
         /* Hidden Class */
@@ -568,9 +548,6 @@
         <div class="tracker-container">
             <div class="tracker-header">
                 <h2 class="tracker-title">Daily Progress</h2>
-                <button class="tracker-button" id="tracker-toggle">
-                    📅
-                </button>
             </div>
             <div class="streak-counter">Current Streak: <span id="streak-count">0</span> days</div>
             <div class="month-navigation">
@@ -1301,10 +1278,7 @@
         }
 
         // Add toggle functionality for the tracker button
-        document.getElementById('tracker-toggle').addEventListener('click', function() {
-            const trackerContainer = document.querySelector('.tracker-container');
-            trackerContainer.classList.toggle('hidden');
-        });
+        // Removed the button as per user request
 
         // Add month navigation functionality
         document.getElementById('prev-month').addEventListener('click', function() {
