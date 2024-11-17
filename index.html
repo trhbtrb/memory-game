@@ -409,6 +409,7 @@
             margin: 20px auto;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 300px;
+            display: block; /* Ensure it's visible initially */
         }
 
         .tracker-button {
@@ -472,6 +473,11 @@
             font-size: 1.2rem;
             color: #333;
             margin: 0;
+        }
+
+        /* Hidden Class */
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -664,6 +670,8 @@
         }
 
         function startGame() {
+            // Do NOT reset streak or activeDays here
+            // Instead, simply reset game stats and UI
             resetGameStats();
             updateStats();
             resetDisplay();
@@ -924,7 +932,14 @@
             // Reset timer input to default value
             timerInputEl.value = '10';
             memorizeTime = 10;
+
+            // Mark today as played
+            markTodayAsPlayed();
+
+            // Show the tracker container again
+            document.querySelector('.tracker-container').style.display = 'block';
         }
+
         function updateStats() {
             scoreEl.textContent = 'Score: ' + score;
             livesEl.textContent = 'Lives: ' + '♥'.repeat(lives);
@@ -1165,26 +1180,7 @@
 
         // Update streak count
         function updateStreakCount() {
-            if (!trackerData.lastPlayed) return;
-
-            const today = new Date().toLocaleDateString();
-            const lastPlayedDate = new Date(trackerData.lastPlayed);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-
-            if (trackerData.lastPlayed === today) {
-                // Already played today, streak continues
-                streakCount = trackerData.streakCount || 0;
-            } else if (lastPlayedDate.toLocaleDateString() === yesterday.toLocaleDateString()) {
-                // Played yesterday, streak continues
-                streakCount = (trackerData.streakCount || 0) + 1;
-            } else {
-                // Streak broken
-                streakCount = 1;
-            }
-
-            trackerData.streakCount = streakCount;
-            document.getElementById('streak-count').textContent = streakCount;
+            document.getElementById('streak-count').textContent = trackerData.streakCount;
         }
 
         // Render calendar
@@ -1211,41 +1207,60 @@
             }
         }
 
-        // Track game start
-        function trackGameStart() {
-            const today = new Date().toLocaleDateString();
-            
-            if (!trackerData.activeDays.includes(today)) {
-                trackerData.activeDays.push(today);
-                
+        // Function to mark today as played and update the streak
+        function markTodayAsPlayed() {
+            const today = new Date();
+            const todayStr = today.toLocaleDateString();
+
+            // Check if today is already marked
+            if (!trackerData.activeDays.includes(todayStr)) {
+                trackerData.activeDays.push(todayStr);
+
+                // Calculate streak
                 if (trackerData.lastPlayed) {
+                    const lastPlayedDate = new Date(trackerData.lastPlayed);
                     const yesterday = new Date();
                     yesterday.setDate(yesterday.getDate() - 1);
-                    
-                    if (trackerData.lastPlayed === yesterday.toLocaleDateString()) {
-                        streakCount++;
-                    } else if (trackerData.lastPlayed !== today) {
+
+                    // Check if lastPlayed was yesterday
+                    if (lastPlayedDate.toDateString() === yesterday.toDateString()) {
+                        streakCount = (trackerData.streakCount || 0) + 1;
+                    } else if (lastPlayedDate.toDateString() === today.toDateString()) {
+                        // Already played today, no change
+                        streakCount = trackerData.streakCount;
+                    } else {
+                        // Streak broken
                         streakCount = 1;
                     }
                 } else {
+                    // First time playing
                     streakCount = 1;
                 }
-                
-                trackerData.lastPlayed = today;
+
+                // Update tracker data
+                trackerData.lastPlayed = todayStr;
                 trackerData.streakCount = streakCount;
-                
+
+                // Save and update UI
                 saveTrackerData();
                 updateStreakCount();
                 renderCalendar();
             }
         }
 
-        // Modify the startGame function to include tracking
-        const originalStartGame = startGame;
-        startGame = function() {
-            trackGameStart();
-            originalStartGame();
-        };
+        // Track game start
+        function trackGameStart() {
+            // Hide the tracker container when the game starts
+            document.querySelector('.tracker-container').style.display = 'none';
+        }
+
+        // Track game end and update the tracker
+        function trackGameEnd() {
+            // Show the tracker container when the game ends
+            document.querySelector('.tracker-container').style.display = 'block';
+            // Mark today as played
+            markTodayAsPlayed();
+        }
 
         // Initialize tracker
         loadTrackerData();
@@ -1260,6 +1275,20 @@
         // ----------------------------
         // Tracker Functionality Ends
         // ----------------------------
+
+        // Modify gameOver() to track game end
+        const originalGameOver = gameOver;
+        gameOver = function() {
+            originalGameOver(); // Call the original gameOver logic
+            trackGameEnd(); // Update the tracker after game over
+        };
+
+        // Modify startRound() to track game start
+        const originalStartRound = startRound;
+        startRound = function() {
+            trackGameStart(); // Hide the tracker when the game starts
+            originalStartRound(); // Call the original startRound logic
+        };
     </script>
 </body>
 </html>
